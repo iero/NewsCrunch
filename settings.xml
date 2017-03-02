@@ -41,10 +41,9 @@
 		<class>inherit-color-parent article-content col-md-8</class>
 		<lang>fr</lang>
 	</service>
-
-	<!--service name="Siecle Digital">
+	<service name="Siecle Digital">
 		<url>https://siecledigital.fr/feed/</url>
 		<lang>fr</lang>
-		<class>post-content description</class>
-	</service-->
+		<class>post-content description </class>
+	</service>
 </data>

@@ -1,20 +1,13 @@
-#!/usr/bin/python
-
 import os
 import urllib3
-from urlparse import urlparse
-
+import requests
 import feedparser
+
 from bs4 import BeautifulSoup
+from urllib.parse import urlparse
 
 import xml.etree.ElementTree as ET
 
-hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
-       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-       'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-       'Accept-Encoding': 'none',
-       'Accept-Language': 'en-US,en;q=0.8',
-       'Connection': 'keep-alive'}
 #--
 
 params_file="settings.xml"
@@ -60,10 +53,9 @@ for service in root.findall('service'):
 	#print "	Changes : "+ feed['feed']['updated'] 
 
 	for post in feed.entries:
-		
 		#print "+-- " + post.title
 		#print "+--- " + post.updated
-		print("+--- " + post.link) 
+		#print("+--- " + post.link) 
 		
 		entry_parsed = urlparse(post.link)
 		entry_domain = '{uri.scheme}://{uri.netloc}/'.format(uri=entry_parsed)
@@ -72,18 +64,17 @@ for service in root.findall('service'):
 		entry = entry+".txt"
 
 		if not os.path.isfile(rss_dir+'/'+entry):
-			web_page = http.request('GET', post.link)
-			soup = BeautifulSoup(web_page.data, "html.parser")
+			web_page = requests.get(post.link)
+			soup = BeautifulSoup(web_page.content, "html.parser")
 			
 			out_text=""
 			for t in soup.find("div", class_=rss_class).find_all('p'):
 				out_text=out_text+t.get_text()
 				
-			
 			# sanitize
 			out_text=out_text.replace(r'\r','')
 
-			file = open(rss_dir+'/'+entry, 'w+')
+			file = open(rss_dir+'/'+entry, 'wb')
 			file.write(out_text.encode('utf-8'))
 			file.close()
 			print(" "+entry+" created")
