@@ -38,7 +38,7 @@ for service in root.findall('service'):
 	rss_dir = out_directory + '/' + rss_lang +'/'+ rss_dir
 	#rss_domain= service.find('domain').text
 
-	print "+ RSS : "+rss_name
+	print("+ RSS : "+rss_name)
 	if not os.path.exists(rss_dir):
 		print "+- "+rss_dir+" created"
     		os.makedirs(rss_dir)
@@ -47,7 +47,7 @@ for service in root.findall('service'):
     	#	ssl._create_default_https_context = ssl._create_unverified_context
 	feed = feedparser.parse(rss_url)
 
-	print "+- "+ feed['feed']['title'] + " with "+ str(len(feed['entries'])) + " entries downloaded"
+	print("+- "+ feed['feed']['title'] + " with "+ str(len(feed['entries'])) + " entries downloaded")
 	#print "	Changes : "+ feed['feed']['updated'] 
 
 	for post in feed.entries:
@@ -91,4 +91,4 @@ for service in root.findall('service'):
 			file = open(rss_dir+'/'+entry, 'w+')
 			file.write(out_text.encode('utf-8'))
 			file.close()
-			print "	"+entry+" created"
+			print(" "+entry+" created")
