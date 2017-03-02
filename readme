@@ -1,0 +1,3 @@
+
+brew install feedparser
+sudo easy_install BeautifulSoup4

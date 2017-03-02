@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<data>
+	
+	<service name="The Verge">
+		<url>http://www.theverge.com/rss/index.xml</url>
+		<lang>en</lang>
+	</service>
+	<service name="The verge #apple">
+		<url>http://www.theverge.com/apple/rss/index.xml</url>
+		<lang>en</lang>
+	</service>
+	<service name="Presse Citron">
+		<url>http://www.presse-citron.net/feed/</url>
+		<lang>fr</lang>
+	</service>
+	<service name="Journal du Net">
+		<url>http://www.journaldunet.com/rss/</url>
+		<lang>fr</lang>
+	</service>
+	<service name="MacGeneration">
+		<url>http://megaflux.macg.co/</url>
+		<lang>fr</lang>
+	</service>
+	
+	<!--service name="Siecle Digital">
+		<url>https://siecledigital.fr/feed/</url>
+		<lang>fr</lang>
+	</service-->
+</data>
