@@ -40,7 +40,7 @@ for service in root.findall('service'):
 
 	print("+ RSS : "+rss_name)
 	if not os.path.exists(rss_dir):
-		print "+- "+rss_dir+" created"
+		print("+- "+rss_dir+" created")
     		os.makedirs(rss_dir)
 
 	#if hasattr(ssl, '_create_unverified_context'):
