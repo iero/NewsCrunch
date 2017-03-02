@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import os
-import urllib2
+import urllib3
 from urlparse import urlparse
 
 import feedparser
@@ -9,7 +9,14 @@ from bs4 import BeautifulSoup
 
 import xml.etree.ElementTree as ET
 
+hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+       'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+       'Accept-Encoding': 'none',
+       'Accept-Language': 'en-US,en;q=0.8',
+       'Connection': 'keep-alive'}
 #--
+
 params_file="settings.xml"
 out_directory = "output"
 
@@ -21,6 +28,8 @@ if not os.path.exists(out_directory+'/fr'):
 
 if not os.path.exists(out_directory+'/en'):
     os.makedirs(out_directory+'/en')
+
+http = urllib3.PoolManager()
 
 tree = ET.parse(params_file)
 root = tree.getroot()
@@ -36,12 +45,12 @@ for service in root.findall('service'):
 	rss_lang = service.find('lang').text
 	rss_dir = '{uri.netloc}'.format(uri=rss_parsed)
 	rss_dir = out_directory + '/' + rss_lang +'/'+ rss_dir
-	#rss_domain= service.find('domain').text
+	rss_class= service.find('class').text
 
 	print("+ RSS : "+rss_name)
 	if not os.path.exists(rss_dir):
 		print("+- "+rss_dir+" created")
-    		os.makedirs(rss_dir)
+		os.makedirs(rss_dir)
 
 	#if hasattr(ssl, '_create_unverified_context'):
     	#	ssl._create_default_https_context = ssl._create_unverified_context
@@ -54,7 +63,7 @@ for service in root.findall('service'):
 		
 		#print "+-- " + post.title
 		#print "+--- " + post.updated
-		#print "+--- " + post.link 
+		print("+--- " + post.link) 
 		
 		entry_parsed = urlparse(post.link)
 		entry_domain = '{uri.scheme}://{uri.netloc}/'.format(uri=entry_parsed)
@@ -63,26 +72,12 @@ for service in root.findall('service'):
 		entry = entry+".txt"
 
 		if not os.path.isfile(rss_dir+'/'+entry):
-			web_page = urllib2.urlopen(post.link)
-			soup = BeautifulSoup(web_page, "html.parser")
+			web_page = http.request('GET', post.link)
+			soup = BeautifulSoup(web_page.data, "html.parser")
 			
 			out_text=""
-			if ("The Verge" in rss_name) :
-				for t in soup.find("div", class_="c-entry-content").find_all('p'):
-					out_text=out_text+t.get_text()
-			elif ("Presse Citron" in rss_name) :
-				for t in soup.find("div", class_="post-content description").find_all('p'):
-					out_text=out_text+t.get_text()
-			elif ("Journal du Net" in rss_name) :
-				for t in soup.find("div", class_="entry").find_all('p'):
-					out_text=out_text+t.get_text()
-			elif ("Siecle Digital" in rss_name) :
-				for t in soup.find("div", class_="post-content description").find_all('p'):
-					out_text=out_text+t.get_text()
-			elif ("MacGeneration" in rss_name) :
-				for t in soup.find("div", class_="field-item even").find_all('p'):
-					out_text=out_text+t.get_text()
-		
+			for t in soup.find("div", class_=rss_class).find_all('p'):
+				out_text=out_text+t.get_text()
 				
 			
 			# sanitize

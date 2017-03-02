@@ -4,26 +4,47 @@
 	<service name="The Verge">
 		<url>http://www.theverge.com/rss/index.xml</url>
 		<lang>en</lang>
+		<class>c-entry-content</class>
 	</service>
 	<service name="The verge #apple">
 		<url>http://www.theverge.com/apple/rss/index.xml</url>
 		<lang>en</lang>
+		<class>c-entry-content</class>
 	</service>
 	<service name="Presse Citron">
 		<url>http://www.presse-citron.net/feed/</url>
 		<lang>fr</lang>
+		<class>post-content description</class>
 	</service>
 	<service name="Journal du Net">
 		<url>http://www.journaldunet.com/rss/</url>
 		<lang>fr</lang>
+		<class>entry</class>
 	</service>
 	<service name="MacGeneration">
 		<url>http://megaflux.macg.co/</url>
 		<lang>fr</lang>
+		<class>field-item even</class>
 	</service>
-	
+	<service name="Piwee">
+		<url>http://piwee.net/feed/</url>
+		<lang>fr</lang>
+		<class>post</class>
+	</service>
+	<service name="Korben">
+		<url>http://korben.info/feed</url>
+		<lang>fr</lang>
+		<class>post-content</class>
+	</service>
+	<service name="Maddyness">
+		<url>https://www.maddyness.com/feed/</url>
+		<class>inherit-color-parent article-content col-md-8</class>
+		<lang>fr</lang>
+	</service>
+
 	<!--service name="Siecle Digital">
 		<url>https://siecledigital.fr/feed/</url>
 		<lang>fr</lang>
+		<class>post-content description</class>
 	</service-->
 </data>
