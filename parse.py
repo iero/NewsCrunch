@@ -10,6 +10,7 @@ import xml.etree.ElementTree as ET
 
 #--
 
+headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
 params_file="settings.xml"
 out_directory = "output"
 
@@ -55,7 +56,7 @@ for service in root.findall('service'):
 	for post in feed.entries:
 		#print "+-- " + post.title
 		#print "+--- " + post.updated
-		#print("+--- " + post.link) 
+		print("+--- " + post.link) 
 		
 		entry_parsed = urlparse(post.link)
 		entry_domain = '{uri.scheme}://{uri.netloc}/'.format(uri=entry_parsed)
@@ -64,9 +65,8 @@ for service in root.findall('service'):
 		entry = entry+".txt"
 
 		if not os.path.isfile(rss_dir+'/'+entry):
-			web_page = requests.get(post.link)
+			web_page = requests.get(post.link, headers=headers)
 			soup = BeautifulSoup(web_page.content, "html.parser")
-			
 			out_text=""
 			for t in soup.find("div", class_=rss_class).find_all('p'):
 				out_text=out_text+t.get_text()

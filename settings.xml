@@ -6,11 +6,6 @@
 		<lang>en</lang>
 		<class>c-entry-content</class>
 	</service>
-	<service name="The verge #apple">
-		<url>http://www.theverge.com/apple/rss/index.xml</url>
-		<lang>en</lang>
-		<class>c-entry-content</class>
-	</service>
 	<service name="Presse Citron">
 		<url>http://www.presse-citron.net/feed/</url>
 		<lang>fr</lang>
