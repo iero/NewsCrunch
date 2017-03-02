@@ -50,7 +50,7 @@ for service in root.findall('service'):
     	#	ssl._create_default_https_context = ssl._create_unverified_context
 	feed = feedparser.parse(rss_url)
 
-	print("+- "+ feed['feed']['title'] + " with "+ str(len(feed['entries'])) + " entries downloaded")
+	#print("+- "+ feed['feed']['title'] + " with "+ len(feed['entries']) + " entries downloaded")
 	#print "	Changes : "+ feed['feed']['updated'] 
 
 	for post in feed.entries:
