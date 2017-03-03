@@ -41,4 +41,9 @@
 		<lang>fr</lang>
 		<class>post-content description </class>
 	</service>
+	<service name="The Hacker News">
+		<url>http://thehackernews.com/feeds/posts/default</url>
+		<lang>en</lang>
+		<class>articlebodyonly</class>
+	</service>
 </data>

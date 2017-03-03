@@ -8,6 +8,12 @@ from urllib.parse import urlparse
 
 import xml.etree.ElementTree as ET
 
+def parseURLName(url) :
+	entry_parsed = urlparse(post.link)
+	entry_domain = '{uri.scheme}://{uri.netloc}/'.format(uri=entry_parsed)
+	entry = post.link.replace(entry_domain,"").replace('/','-').strip("-")
+	entry = entry+".txt"
+	return entry
 #--
 
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
@@ -46,8 +52,6 @@ for service in root.findall('service'):
 		print("+- "+rss_dir+" created")
 		os.makedirs(rss_dir)
 
-	#if hasattr(ssl, '_create_unverified_context'):
-    	#	ssl._create_default_https_context = ssl._create_unverified_context
 	feed = feedparser.parse(rss_url)
 
 	#print("+- "+ feed['feed']['title'] + " with "+ len(feed['entries']) + " entries downloaded")
@@ -57,15 +61,21 @@ for service in root.findall('service'):
 		#print "+-- " + post.title
 		#print "+--- " + post.updated
 		print("+--- " + post.link) 
-		
-		entry_parsed = urlparse(post.link)
-		entry_domain = '{uri.scheme}://{uri.netloc}/'.format(uri=entry_parsed)
+	
+		entry=parseURLName(post.link)	
 
-		entry = post.link.replace(entry_domain,"").replace('/','-').strip("-")
-		entry = entry+".txt"
 
 		if not os.path.isfile(rss_dir+'/'+entry):
-			web_page = requests.get(post.link, headers=headers)
+			web_page = requests.get(post.link, headers=headers, allow_redirects=True)
+			if web_page.history:
+				link = web_page.url.rsplit('?', 1)[0]
+				print("+--- Redirection to :" + link)
+				web_page = requests.get(link, headers=headers)
+				print(web_page.content)
+				file = open(rss_dir+'/'+entry+".raw", 'wb')
+				file.write(web_page.content.encode('utf-8'))
+				file.close()
+				
 			soup = BeautifulSoup(web_page.content, "html.parser")
 			out_text=""
 			for t in soup.find("div", class_=rss_class).find_all('p'):
