@@ -4,3 +4,4 @@ sudo easy_install BeautifulSoup4
 
 
 conda install -c conda-forge urllib3=1.20
+conda install gensim nltk
