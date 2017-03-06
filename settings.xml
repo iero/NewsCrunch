@@ -1,49 +1,67 @@
 <?xml version="1.0"?>
 <data>
-	
-	<service name="The Verge">
-		<url>http://www.theverge.com/rss/index.xml</url>
-		<lang>en</lang>
-		<class>c-entry-content</class>
-	</service>
-	<service name="Presse Citron">
+
+	<settings>
+		<output>output</output>
+		<User-Agent>'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'</User-Agent>
+		<feed_rss_file>feed_rss.xml</feed_rss_file>
+		<feed_atom_file>feed_atom.xml</feed_atom_file>
+		<feed_name>Veille</feed_name>
+		<feed_url>http://www.iero.org/feed/newscrunch</feed_url>
+	</settings>
+
+	<!-- French -->
+
+	<service name="Presse Citron" lang="fr">
 		<url>http://www.presse-citron.net/feed/</url>
-		<lang>fr</lang>
-		<class>post-content description</class>
+		<text type="div" name="class" section="p">post-content description</text>
+		<image type="div" name="class" section="img" attribute="src">post-content description</image>
 	</service>
-	<service name="Journal du Net">
+	<service name="Journal du Net" lang="fr">
 		<url>http://www.journaldunet.com/rss/</url>
 		<lang>fr</lang>
-		<class>entry</class>
+		<text type="div" name="class" section="p">entry</text>
+		<image type="p" name="class" section="a" attribute="href">app_entry_lead</image>
 	</service>
-	<service name="MacGeneration">
+	<service name="MacGeneration" lang="fr">
 		<url>http://megaflux.macg.co/</url>
-		<lang>fr</lang>
-		<class>field-item even</class>
+		<text type="div" name="class" section="p">field-item even</text>
+		<image type="div" name="class" section="img" attribute="src">field-item even</image>
 	</service>
-	<service name="Piwee">
+	<service name="Siecle Digital" lang="fr">
+		<url>https://siecledigital.fr/feed/</url>
+		<text type="div" name="class" section="p">post-content description </text>
+		<image type="div" name="class" section="a" attribute="href">featured</image>
+	</service>
+	<!--service name="Piwee" lang="fr">
 		<url>http://piwee.net/feed/</url>
 		<lang>fr</lang>
-		<class>post</class>
+		<text type="div" name="class" section="p">post</text>
 	</service>
-	<service name="Korben">
+	<service name="Korben" lang="fr">
 		<url>http://korben.info/feed</url>
 		<lang>fr</lang>
-		<class>post-content</class>
+		<text type="div" name="class" section="p">post-content</text>
 	</service>
-	<service name="Maddyness">
+	<service name="Maddyness" lang="fr">
 		<url>https://www.maddyness.com/feed/</url>
-		<class>inherit-color-parent article-content col-md-8</class>
 		<lang>fr</lang>
+		<text type="div" name="class" section="p">inherit-color-parent article-content col-md-8</text>
+	</service-->
+
+
+	<!-- English -->
+
+	<!--service name="The Verge" lang="en">
+		<url>http://www.theverge.com/rss/index.xml</url>
+		<text type="div" name="class" section="p">c-entry-content</text>
+		<image type="picture" name="class" section="img" attribute="src">c-picture</image>
 	</service>
-	<service name="Siecle Digital">
-		<url>https://siecledigital.fr/feed/</url>
-		<lang>fr</lang>
-		<class>post-content description </class>
-	</service>
-	<service name="The Hacker News">
+	<service name="The Hacker News" lang="en">
 		<url>http://thehackernews.com/feeds/posts/default</url>
-		<lang>en</lang>
-		<class>articlebodyonly</class>
-	</service>
+		<text type="div" name="class" section="div">articlebodyonly</text>
+		<image type="div" name="class" section="img" attribute="src">articlebodyonly</image>
+	</service-->
+
+
 </data>

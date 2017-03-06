@@ -23,12 +23,12 @@ def leaves(tree):
     """find NP (npun) leaf nodes in chunck tree"""
     for subtree in tree.subtrees(filter = lambda t: t.label()=='NP'):
         yield subtree.leaves()
-        
+
 def normalise(word):
     #define lemmatizer and stemmer
     lemmatizer=nltk.WordNetLemmatizer()
     stemmer=nltk.stem.porter.PorterStemmer()
-    
+
     """normlaisde in lowcase and stem them"""
     word = word.lower()
     #word = stemmer.stem(word)
@@ -44,19 +44,19 @@ def get_terms(tree):
     for leaf in leaves(tree):
         term = [normalise(w) for w,t in leaf if acceptable_word(w)]
         yield term
-        
+
 #-----------------------
 #simple summary function
-def summary(text,nb_words):
+def summary(textstring,nb_words):
     from gensim.summarization import summarize
     #conversion in utf8
     textsummary = summarize(textstring, word_count=nb_words, split=False)
     return textsummary
-    
+
 #-----------------------
 #extract main sentences
 def extract_sentences(text, nb_keywords):
-    
+
     import nltk
     from nltk.corpus import stopwords
     from nltk.probability import FreqDist
@@ -65,26 +65,26 @@ def extract_sentences(text, nb_keywords):
     grammar = r"""
         NBAR:
             {<NN.*|JJ>*<NN.*>} # nouns and adjectives, terminated with nouns
-            
+
         NP:
             {<NBAR>}
             {<NBAR><IN><NBAR>} # above, connected with in, of, etc.
     """
-    
+
     # create the chunker to retrieve sentences regarding specified grammar
     chunker = nltk.RegexpParser(grammar)
-    
+
     #extract tokens
     tokens = nltk.word_tokenize(text)
     #tag tokens (i.e. define nouns, verbs, etc.)
     postokens = nltk.tag.pos_tag(tokens)
-    
+
     #build a tree based on tagged tokens:
     tree = chunker.parse(postokens)
-    
+
     #extract all sentences from the text as a list, tuples.
     main_sentences = list(get_terms(tree))
-    
+
     #combines words from tuples into a single phrase
     sentences = [""]*len(main_sentences)
 
@@ -97,12 +97,12 @@ def extract_sentences(text, nb_keywords):
 
     #calculate frequence of sentences
     fdist = FreqDist(sentences)
-    
+
     #select more frequent words in all sentences
     mostcommon = fdist.most_common(nb_keywords)
-    
+
     final_sentences=['']*len(sentences)
-    
+
     #extract the sentences containing more frequent words
     for i in range (0,len(sentences)):
         check = False
@@ -113,12 +113,11 @@ def extract_sentences(text, nb_keywords):
                 check = True
         if check == True:
             final_sentences[i]=sentences[i]
-    
+
     #filter to remove empty list
     final_sentences=filter(None,final_sentences)
-    
+
     #remove duplicates
     final_sentences = list(set(final_sentences))
-    
+
     return final_sentences
-    
