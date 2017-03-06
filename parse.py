@@ -4,8 +4,6 @@ import requests
 import feedparser
 import urllib.request
 
-import news_process
-
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from feedgen.feed import FeedGenerator
@@ -109,6 +107,7 @@ for service in root.findall('service'):
 			#print("+-> " + web_page.url)
 			soup = BeautifulSoup(web_page.content, "html.parser")
 
+
 			# Grab text
 			rss_text_type = service.find('text').get('type')
 			rss_text_name = service.find('text').get('name')
@@ -139,37 +138,49 @@ for service in root.findall('service'):
 			file.close()
 
 			#print(news_process.summary(out_text,35))
+			filtered_post = False
+			if service.find('filters') :
+				for filter in service.find('filters').findall("filter") :
+					filter_type = filter.get('type')
+					filter_value = filter.text
+					#filter_section = filter.get('section')
+					#filter_result = soup.find(filter_type, class_=filter_value).find_all(filter_section)
+					filter_result = soup.find(filter_type, class_=filter_value)
+					if filter_result is not None :
+						print("filter matched")
+						filtered_post = True
 
 			# Twitter
-			twit_text = post.title
-			if (len(twit_text) >= 116 ) :
-				twit_text = twit_text[:115]
-			try :
-				bitly_article_url = shortener.short(web_page.url)
-				twit_text = twit_text+" "+bitly_article_url
-			except :
-				twit_text = twit_text+" "+web_page.url
+			if not filtered_post :
+				twit_text = post.title
+				if (len(twit_text) >= 116 ) :
+					twit_text = twit_text[:115]
+				try :
+					bitly_article_url = shortener.short(web_page.url)
+					twit_text = twit_text+" "+bitly_article_url
+				except :
+					twit_text = twit_text+" "+web_page.url
 
-			if out_img :
-				response = urllib.request.urlopen(out_img)
-				data = response.read()
-				#r = twitterapi.request('statuses/update_with_media', {'status':twit_text}, {'media[]':data})
-			#else :
-				#r = twitterapi.request('statuses/update', {'status':twit_text})
+				if out_img :
+					response = urllib.request.urlopen(out_img)
+					data = response.read()
+					r = twitterapi.request('statuses/update_with_media', {'status':twit_text}, {'media[]':data})
+				else :
+					r = twitterapi.request('statuses/update', {'status':twit_text})
 
-			# Add to rss
-			if out_img is not None :
-				out_text="<img src=\""+out_img+"\"/><p>"+out_text+"</p>"
-			fe = fg.add_entry()
-			fe.id(entry)
-			fe.title(post.title)
-			fe.author(name=rss_name)
-			#fe.updated(post.updated)
-			fe.link(href=post.link)
-			fe.content(src=out_text, type="raw")
-			#fe.summary(src=out_text, type="raw")
-			#fg.rss_file(feed_rss_file) # Write the RSS feed to a file
-			fg.atom_file(feed_atom_file) # Write the RSS feed to a file
+				# Add to rss
+				if out_img is not None :
+					out_text="<img src=\""+out_img+"\"/><p>"+out_text+"</p>"
+				fe = fg.add_entry()
+				fe.id(entry)
+				fe.title(post.title)
+				fe.author(name=rss_name)
+				#fe.updated(post.updated)
+				fe.link(href=post.link)
+				fe.content(src=out_text, type="raw")
+				#fe.summary(src=out_text, type="raw")
+				#fg.rss_file(feed_rss_file) # Write the RSS feed to a file
+				fg.atom_file(feed_atom_file) # Write the RSS feed to a file
 
 
 			print(" "+entry+" created")

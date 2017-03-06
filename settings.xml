@@ -27,6 +27,9 @@
 		<url>http://megaflux.macg.co/</url>
 		<text type="div" name="class" section="p">field-item even</text>
 		<image type="div" name="class" section="img" attribute="src">field-item even</image>
+		<filters>
+			<filter type="section" section="h2">Promo</filter>
+		</filters>
 	</service>
 	<service name="Siecle Digital" lang="fr">
 		<url>https://siecledigital.fr/feed/</url>
