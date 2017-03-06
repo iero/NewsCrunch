@@ -40,17 +40,22 @@
 		<url>http://piwee.net/feed/</url>
 		<lang>fr</lang>
 		<text type="div" name="class" section="p">post</text>
-	</service>
+	</service-->
 	<service name="Korben" lang="fr">
 		<url>http://korben.info/feed</url>
-		<lang>fr</lang>
 		<text type="div" name="class" section="p">post-content</text>
+		<image type="div" name="class" section="img" attribute="src">post-thumbnail</image>
 	</service>
-	<service name="Maddyness" lang="fr">
+	<!--service name="Maddyness" lang="fr">
 		<url>https://www.maddyness.com/feed/</url>
 		<lang>fr</lang>
 		<text type="div" name="class" section="p">inherit-color-parent article-content col-md-8</text>
+	</service>
+	>service name="Nouvel Obs" lang="fr">
+		<url>http://o.nouvelobs.com/high-tech/rss.xml</url>
+		<text type="div" name="class" section="p">???</text>
 	</service-->
+
 
 
 	<!-- English -->

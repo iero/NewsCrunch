@@ -162,9 +162,18 @@ for service in root.findall('service'):
 					twit_text = twit_text+" "+web_page.url
 
 				if out_img :
-					response = urllib.request.urlopen(out_img)
-					data = response.read()
-					r = twitterapi.request('statuses/update_with_media', {'status':twit_text}, {'media[]':data})
+					#try :
+						print("+---> Image : " + out_img)
+						if out_img.startswith("//") :
+							out_img = "https:"+out_img
+							response = requests.get(out_img, headers=headers, allow_redirects=True)
+							data = response.content
+							#response = urllib.request.urlopen(out_img)
+							#data = response.read()
+							r = twitterapi.request('statuses/update_with_media', {'status':twit_text}, {'media[]':data})
+					#except :
+						#print("+---> failed")
+						#r = twitterapi.request('statuses/update', {'status':twit_text})
 				else :
 					r = twitterapi.request('statuses/update', {'status':twit_text})
 

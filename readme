@@ -16,3 +16,10 @@ import nltk
 nltk.download()
 
 #installer corpora/stopwords
+
+*/5 * * * * python /home/iero/scripts/NewsCrunch/parse.py
+
+screen -S newscrunch #creer la session
+[CTRL]+[a] suivi de [d]
+
+screen -r newscrunch #rattacher la session
