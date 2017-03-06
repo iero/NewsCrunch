@@ -28,6 +28,7 @@ def sanitizeText(text) :
 		return text
 
 #--
+doTweet = True
 
 # Load Services Settings
 params_file="settings.xml"
@@ -89,15 +90,16 @@ for service in root.findall('service'):
 	feed = feedparser.parse(rss_url)
 
 	for post in feed.entries:
+		link = post.link.rsplit('?', 1)[0]
+		link = link.rsplit('#', 1)[0]
+		entry=parseURLName(link)
 
-		entry=parseURLName(post.link)
-
-		print("+-> " + post.link)
+		print("+-> " + link)
 		print("+--> " + rss_dir+'/'+entry)
 
 		# Continue if new page and test redirection
 		if not os.path.isfile(rss_dir+'/'+entry):
-			web_page = requests.get(post.link, headers=headers, allow_redirects=True)
+			web_page = requests.get(link, headers=headers, allow_redirects=True)
 			if web_page.history:
 				link = web_page.url.rsplit('?', 1)[0]
 				print("+--> " + link)
@@ -107,15 +109,16 @@ for service in root.findall('service'):
 			#print("+-> " + web_page.url)
 			soup = BeautifulSoup(web_page.content, "html.parser")
 
-
 			# Grab text
 			rss_text_type = service.find('text').get('type')
 			rss_text_name = service.find('text').get('name')
 			rss_text_value = service.find('text').text
 			rss_text_section = service.find('text').get('section')
 			out_text=""
-			for t in soup.find(rss_text_type, class_=rss_text_value).find_all(rss_text_section):
-				out_text=out_text+sanitizeText(t.get_text())
+			text_sec=soup.find(rss_text_type, class_=rss_text_value)
+			if text_sec is not None :
+				for t in text_sec.find_all(rss_text_section):
+					out_text=out_text+sanitizeText(t.get_text())
 
 			# sanitize
 			out_text=out_text.replace(r'\r','')
@@ -143,8 +146,6 @@ for service in root.findall('service'):
 				for filter in service.find('filters').findall("filter") :
 					filter_type = filter.get('type')
 					filter_value = filter.text
-					#filter_section = filter.get('section')
-					#filter_result = soup.find(filter_type, class_=filter_value).find_all(filter_section)
 					filter_result = soup.find(filter_type, class_=filter_value)
 					if filter_result is not None :
 						print("filter matched")
@@ -162,20 +163,18 @@ for service in root.findall('service'):
 					twit_text = twit_text+" "+web_page.url
 
 				if out_img :
-					#try :
-						print("+---> Image : " + out_img)
-						if out_img.startswith("//") :
-							out_img = "https:"+out_img
-							response = requests.get(out_img, headers=headers, allow_redirects=True)
-							data = response.content
-							#response = urllib.request.urlopen(out_img)
-							#data = response.read()
-							r = twitterapi.request('statuses/update_with_media', {'status':twit_text}, {'media[]':data})
-					#except :
-						#print("+---> failed")
-						#r = twitterapi.request('statuses/update', {'status':twit_text})
+					print("+---> Image : " + out_img)
+					if out_img.startswith("//") :
+						out_img = "https:"+out_img
+					elif out_img.startswith("/") :
+						parsed_web_page = urlparse(web_page.url)
+						dom =  '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_web_page)
+						out_img = dom+out_img
+					response = requests.get(out_img, headers=headers, allow_redirects=True)
+					data = response.content
+					if doTweet : r = twitterapi.request('statuses/update_with_media', {'status':twit_text}, {'media[]':data})
 				else :
-					r = twitterapi.request('statuses/update', {'status':twit_text})
+					if doTweet : r = twitterapi.request('statuses/update', {'status':twit_text})
 
 				# Add to rss
 				if out_img is not None :

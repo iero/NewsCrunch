@@ -3,6 +3,10 @@ from pyshorteners import Shortener
 import xml.etree.ElementTree as ET
 import urllib.request
 
+# Twitter :
+size_url=23
+size_img=24
+
 auth_file="auth.xml"
 auth_tree = ET.parse(auth_file)
 auth_root = auth_tree.getroot()
