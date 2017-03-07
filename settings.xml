@@ -64,9 +64,17 @@
 		<text type="div" name="class" section="p">inherit-color-parent article-content col-md-8</text>
 		<image type="div" name="class" section="source" attribute="srcset">article-image-wrapper</image>
 	</service>
+	<service name="Usine Digitale" lang="fr">
+		<url>http://www.usine-digitale.fr/rss</url>
+		<text type="div" name="class" section="p">blocTexteType1</text>
+		<image type="figure" name="class" section="img" attribute="src">blocImageType2</image>
+	</service>
 
 	<!-- To incorporate
 	itespresso
+	nextimpact
+	wall street journal
+	rue89
 	-->
 
 	<!-- English -->

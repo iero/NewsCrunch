@@ -146,7 +146,7 @@ for service in root.findall('service'):
 				#print(img_sec)
 				for element in img_sec.findAll(rss_img_section):
 					out_img=element.get(rss_img_attribute)
-					#print(element)
+					#print(out_img)
 
 			#print(news_process.summary(out_text,35))
 			filtered_post = False
