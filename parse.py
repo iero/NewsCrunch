@@ -28,7 +28,7 @@ def sanitizeText(text) :
 		return text
 
 #--
-doTweet = True
+doTweet = False
 
 # Load Services Settings
 params_file="settings.xml"
@@ -44,7 +44,6 @@ for service in auth_root.findall('service') :
         shortener = Shortener('Bitly', bitly_token=service.find("token").text)
     elif service.get("name") == "twitter" :
         twitterapi = TwitterAPI(consumer_key=service.find("consumer_key").text, consumer_secret=service.find("consumer_secret").text, access_token_key=service.find("access_token_key").text, access_token_secret=service.find("access_token_secret").text)
-
 
 headers = {'User-Agent': root.find('settings').find('User-Agent').text}
 out_directory = root.find('settings').find('output').text
@@ -94,16 +93,23 @@ for service in root.findall('service'):
 		link = link.rsplit('#', 1)[0]
 		entry=parseURLName(link)
 
-		print("+-> " + link)
-		print("+--> " + rss_dir+'/'+entry)
-
 		# Continue if new page and test redirection
 		if not os.path.isfile(rss_dir+'/'+entry):
+			print("+-> " + link)
+			print("+--> " + rss_dir+'/'+entry)
+
+			# Sanitize page url and get redirection target if needed
 			web_page = requests.get(link, headers=headers, allow_redirects=True)
 			if web_page.history:
 				link = web_page.url.rsplit('?', 1)[0]
 				print("+--> " + link)
 				web_page = requests.get(link, headers=headers)
+
+			# Sanitize title
+			post_title = post.title
+			if service.find('sanitize') :
+				for removedField in service.find('sanitize').findall("remove") :
+					post_title = post_title.replace(removedField.text,"")
 
 			# Parse page
 			#print("+-> " + web_page.url)
@@ -123,6 +129,10 @@ for service in root.findall('service'):
 			# sanitize
 			out_text=out_text.replace(r'\r','')
 
+			file = open(rss_dir+'/'+entry, 'wb')
+			file.write(out_text.encode('utf-8'))
+			file.close()
+
 			# Grab main image
 			rss_img_type = service.find('image').get('type')
 			rss_img_name = service.find('image').get('name')
@@ -133,12 +143,10 @@ for service in root.findall('service'):
 			out_img=""
 			img_sec=soup.find(rss_img_type, class_=rss_img_value)
 			if img_sec is not None :
+				#print(img_sec)
 				for element in img_sec.findAll(rss_img_section):
 					out_img=element.get(rss_img_attribute)
-
-			file = open(rss_dir+'/'+entry, 'wb')
-			file.write(out_text.encode('utf-8'))
-			file.close()
+					#print(element)
 
 			#print(news_process.summary(out_text,35))
 			filtered_post = False

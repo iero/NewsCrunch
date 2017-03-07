@@ -27,11 +27,16 @@ def export_to_es(directory, source, title):
     
     #detect language
     language = detect_lang.get_language(textstring)
-        
+    
+    #count number of words
+    from nltk.tokenize import TreebankWordTokenizer
+    tokenizer = TreebankWordTokenizer()
+    nb_of_words = 1+len(tokenizer.tokenize("le petit , chein"))/100
+
     if language == 'french':
         text_summary = Summary.summary(directory + '/' + title,language,3)
-        mainsentences = extract_main_sentences_fr.extract_sentences_fr(textstring,3)
-        mainwords = extract_main_sentences_fr.extract_words_fr(textstring,3)
+        mainsentences = extract_main_sentences_fr.extract_sentences_fr(textstring,nb_of_words)
+        mainwords = extract_main_sentences_fr.extract_words_fr(textstring,nb_of_words)
     else:
         text_summary = ""
         mainsentences = ""

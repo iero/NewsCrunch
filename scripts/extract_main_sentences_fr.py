@@ -27,9 +27,34 @@ st = StanfordPOSTagger(path_stanford_model,path_stanford_tagger_jar)
 #create stopword list
 stopwords_base = ""
 stopwords_fr = stopwords.words('french')
-punctuation = ['.',',',':',';','?','!','"',"'",'$','%','(',')','«','»','’']
-useless_words = ['les','a','tout','toute','toutes','tous','plus','moins','très','mais','ou','où','et','donc','or','ni','car','si', "d’", "n’", "l’", "qu’", "s’"]
-stopwords_fr += punctuation + useless_words
+punctuation = ['.',',',':',';','?','!','"',"'",'$','%','(',')','«','»','’', '`','``', "''",'-', '_', '&']
+useless_words = ['les','a','tout','toute','toutes','tous','plus','moins','très','encore','autre', 'comme', 'autres',
+                 'mais','ou','où','et','donc','or','ni','car',
+                 'si','aussi','alors','vers','entre','souvent','autour','chaque', 'chacun', 'chacune','quelques','quelqu',
+                 'lorsque','enfin','déjà','grâce','dès',
+                 'ce', 'cette', 'ci','ça','cela','ces','dont','chez','cet', 'ceux'
+                 'aucun', 'aucune','autant',
+                 "d’", "n’", "l’", "qu’", "s’",'leur', 'leurs',
+                 'sans', 'avec', 'sous', 'sur', 'bon', 'bien','rien','depuis','ainsi','selon','ainsi','souvent','contre',
+                 'début', 'fin', 'dernier', 'avant', 'après', 'fois','dernière', 'derniers', 'dernières',
+                 'peu', 'beaucoup','grand', 'grands', 'grande', 'grandes', 'petit', 'petite', 'petits', 'petites',
+                 'un', 'deux', 'trois','premier', 'première',
+                 'hui']
+verbes_ternes = ['être', 'etre', 'est', 'sont','fut','êtes',
+                 'faut', 'falloir', 'font','fait', 'faire', 'faites',
+                 'avoir','à','avez',
+                 'devoir', 'doit','doivent','devrait', 'devraient','devez',
+                 'permet', 'permettre', 
+                 'voir', 'vu','voyez',
+                 'savoir','sait','su','savez',
+                 'pouvoir', 'peut', 'peuvent', 'pouvez',
+                'aller', 'va', 'vont', 'allez']
+determinants = ['je', 'tu', 'il', 'elle', 'on', 'nous', 'vous', 'ils', 'elles']
+months = ['janvier', 'février', 'fevrier', 'mars', 'avril', 'mai', 'juin', 'juillet', 'aout',
+         'septembre', 'octobre', 'novembre', 'décembre', 'decembre']
+date = ['jour', 'jours', 'minutes', 'minute', 'seconde', 'secondes', 'mois', 'année', 'années', 'an', 'ans', 'nuit', 'temps']
+measures = ['mm', 'cm', 'km', 'm']
+stopwords_fr += punctuation + useless_words + verbes_ternes + determinants + months + date + measures
 
 #create french grammar It's a Regex
 grammar_french = r"""

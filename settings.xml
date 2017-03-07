@@ -22,6 +22,9 @@
 		<lang>fr</lang>
 		<text type="div" name="class" section="p">entry</text>
 		<image type="p" name="class" section="a" attribute="href">app_entry_lead</image>
+		<sanitize>
+			<remove>[Info JDN] </remove>
+		</sanitize>
 	</service>
 	<service name="MacGeneration" lang="fr">
 		<url>http://megaflux.macg.co/</url>
@@ -46,24 +49,25 @@
 		<text type="div" name="class" section="p">post-content</text>
 		<image type="div" name="class" section="img" attribute="src">post-thumbnail</image>
 	</service>
-	<!--service name="Maddyness" lang="fr">
-		<url>https://www.maddyness.com/feed/</url>
-		<lang>fr</lang>
-		<text type="div" name="class" section="p">inherit-color-parent article-content col-md-8</text>
-	</service-->
 	<service name="Nouvel Obs" lang="fr">
 		<url>http://o.nouvelobs.com/high-tech/rss.xml</url>
 		<text type="div" name="class" section="p">o-article-body</text>
 		<image type="div" name="class" section="img" attribute="src">o-article-body</image>
 	</service>
-
-	<service name="Nouvel Obs" lang="fr">
+	<service name="Les echos business" lang="fr">
 		<url>https://business.lesechos.fr/rss/dn.xml</url>
 		<text type="div" name="class" section="p">main-content content-article</text>
 		<image type="div" name="class" section="img" attribute="srcset">picture-article</image>
 	</service>
+	<service name="Maddyness" lang="fr">
+		<url>https://www.maddyness.com/feed/</url>
+		<text type="div" name="class" section="p">inherit-color-parent article-content col-md-8</text>
+		<image type="div" name="class" section="source" attribute="srcset">article-image-wrapper</image>
+	</service>
 
-
+	<!-- To incorporate
+	itespresso
+	-->
 
 	<!-- English -->
 
