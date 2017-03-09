@@ -17,8 +17,8 @@
 		<text type="div" name="class" section="p">post-content description</text>
 		<image type="div" name="class" section="img" attribute="src">post-content description</image>
 	</service>
-	<service name="Journal du Net" lang="fr">
-		<url>http://www.journaldunet.com/rss/</url>
+	<service name="Journal du Net #smartcities" lang="fr">
+		<url>http://www.journaldunet.com/smart-city/rss/</url>
 		<lang>fr</lang>
 		<text type="div" name="class" section="p">entry</text>
 		<image type="p" name="class" section="a" attribute="href">app_entry_lead</image>
@@ -26,6 +26,43 @@
 			<remove>[Info JDN] </remove>
 		</sanitize>
 	</service>
+	<service name="Journal du Net #iot" lang="fr">
+		<url>http://www.journaldunet.com/iot/rss/</url>
+		<lang>fr</lang>
+		<text type="div" name="class" section="p">entry</text>
+		<image type="p" name="class" section="a" attribute="href">app_entry_lead</image>
+		<sanitize>
+			<remove>[Info JDN] </remove>
+		</sanitize>
+	</service>
+	<service name="Journal du Net #rh" lang="fr">
+		<url>http://www.journaldunet.com/e-rh/rss/</url>
+		<lang>fr</lang>
+		<text type="div" name="class" section="p">entry</text>
+		<image type="p" name="class" section="a" attribute="href">app_entry_lead</image>
+		<sanitize>
+			<remove>[Info JDN] </remove>
+		</sanitize>
+	</service>
+	<service name="Journal du Net #cloud" lang="fr">
+		<url>http://www.journaldunet.com/cloud-computing/rss/</url>
+		<lang>fr</lang>
+		<text type="div" name="class" section="p">entry</text>
+		<image type="p" name="class" section="a" attribute="href">app_entry_lead</image>
+		<sanitize>
+			<remove>[Info JDN] </remove>
+		</sanitize>
+	</service>
+	<service name="Journal du Net #bigdata" lang="fr">
+		<url>http://www.journaldunet.com/big-data/rss/</url>
+		<lang>fr</lang>
+		<text type="div" name="class" section="p">entry</text>
+		<image type="p" name="class" section="a" attribute="href">app_entry_lead</image>
+		<sanitize>
+			<remove>[Info JDN] </remove>
+		</sanitize>
+	</service>
+
 	<service name="MacGeneration" lang="fr">
 		<url>http://megaflux.macg.co/</url>
 		<twitter>MacGeneration</twitter>
@@ -85,11 +122,17 @@
 	</service>
 
 	<!-- To incorporate
-	itespresso
 	nextimpact
 	wall street journal
 	rue89
 	-->
+	<service name="Rue89 #planete" lang="fr">
+		<url>http://tempsreel.nouvelobs.com/rue89/rue89-planete/rss.xml</url>
+		<text type="section" name="class" section="p">obs-content</text>
+		<image type="section" name="class" section="img" attribute="src">obs-content</image>
+	</service>
+
+
 
 	<!-- English -->
 

@@ -7,6 +7,7 @@ import urllib.request
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from feedgen.feed import FeedGenerator
+from datetime import datetime
 
 import xml.etree.ElementTree as ET
 
@@ -39,6 +40,8 @@ root = tree.getroot()
 auth_file="auth.xml"
 auth_tree = ET.parse(auth_file)
 auth_root = auth_tree.getroot()
+
+print(datetime.now())
 
 for service in auth_root.findall('service') :
     if service.get("name") == "bitly" :
