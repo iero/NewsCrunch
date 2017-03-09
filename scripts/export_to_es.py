@@ -31,7 +31,7 @@ def export_to_es(directory, source, title):
     #count number of words
     from nltk.tokenize import TreebankWordTokenizer
     tokenizer = TreebankWordTokenizer()
-    nb_of_words = 1+len(tokenizer.tokenize("le petit , chein"))/100
+    nb_of_words = 1+len(tokenizer.tokenize(textstring))/100
 
     if language == 'french':
         text_summary = Summary.summary(directory + '/' + title,language,3)
@@ -42,7 +42,9 @@ def export_to_es(directory, source, title):
         mainsentences = ""
         mainwords = ""                          
             
-
+    
+    datepublish = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    
     body = {"title" : title,
             "content" : content,
             "abstract" : text_summary,
@@ -53,9 +55,13 @@ def export_to_es(directory, source, title):
             "mainwords" : mainwords,
             "cluster": None,
             "language": language,
-            "published": "1483225200000",
+            "published": datepublish,
             "is_tagged": None}
-                        
+
+            
+    print(datepublish)
+                      #"published": "1483225200000",
+    
     es.index(index=INDEX_NAME, doc_type='article', body=body)
     
 

@@ -28,7 +28,8 @@ def create_index(es_host):
                     "mainwords" : { "type": "keyword" },
                     "cluster": {  "type": "text" },
                     "language": { "type": "keyword" },
-                    "published": { "type": "date" },
+                    "published": { "type": "date",
+                                   "format": "yyyy-MM-dd HH:mm:ss"},
                     "is_tagged": { "type": "boolean" }
                      }
                 }

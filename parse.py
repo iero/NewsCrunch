@@ -28,6 +28,7 @@ def sanitizeText(text) :
 		return text
 
 #--
+debug = False
 doTweet = False
 
 # Load Services Settings
@@ -95,14 +96,14 @@ for service in root.findall('service'):
 
 		# Continue if new page and test redirection
 		if not os.path.isfile(rss_dir+'/'+entry):
-			print("+-> " + link)
-			print("+--> " + rss_dir+'/'+entry)
+			if debug : print("+-> " + link)
+			if debug : print("+--> " + rss_dir+'/'+entry)
 
 			# Sanitize page url and get redirection target if needed
 			web_page = requests.get(link, headers=headers, allow_redirects=True)
 			if web_page.history:
 				link = web_page.url.rsplit('?', 1)[0]
-				print("+--> " + link)
+				if debug : print("+--> " + link)
 				web_page = requests.get(link, headers=headers)
 
 			# Sanitize title
@@ -146,7 +147,7 @@ for service in root.findall('service'):
 				#print(img_sec)
 				for element in img_sec.findAll(rss_img_section):
 					out_img=element.get(rss_img_attribute)
-					#print(out_img)
+					print(out_img)
 
 			#print(news_process.summary(out_text,35))
 			filtered_post = False
@@ -185,7 +186,7 @@ for service in root.findall('service'):
 					if doTweet : r = twitterapi.request('statuses/update', {'status':twit_text})
 
 				# Add to rss
-				if out_img is not None :
+				if out_img is not None or not out_img:
 					out_text="<img src=\""+out_img+"\"/><p>"+out_text+"</p>"
 				fe = fg.add_entry()
 				fe.id(entry)

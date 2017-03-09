@@ -28,6 +28,7 @@
 	</service>
 	<service name="MacGeneration" lang="fr">
 		<url>http://megaflux.macg.co/</url>
+		<twitter>MacGeneration</twitter>
 		<text type="div" name="class" section="p">field-item even</text>
 		<image type="div" name="class" section="img" attribute="src">field-item even</image>
 		<filters>
@@ -39,6 +40,18 @@
 		<text type="div" name="class" section="p">post-content description </text>
 		<image type="div" name="class" section="a" attribute="href">featured</image>
 	</service>
+	<service name="Sciences et Avenir" lang="fr">
+		<url>https://www.sciencesetavenir.fr/high-tech/rss.xml</url>
+		<text type="div" name="class" section="p">corps article-sea-home-a article-sea-hightech-a</text>
+		<image type="div" name="class" section="img" attribute="src">in</image>
+	</service>
+	<service name="Itespresso" lang="fr">
+		<url>http://www.itespresso.fr/feed</url>
+		<text type="div" name="class" section="p">article-content</text>
+		<image type="div" name="class" section="img" attribute="src">imageTitleWrapper</image>
+	</service>
+
+
 	<!--service name="Piwee" lang="fr">
 		<url>http://piwee.net/feed/</url>
 		<lang>fr</lang>
@@ -61,6 +74,7 @@
 	</service>
 	<service name="Maddyness" lang="fr">
 		<url>https://www.maddyness.com/feed/</url>
+		<twitter>bymaddyness</twitter>
 		<text type="div" name="class" section="p">inherit-color-parent article-content col-md-8</text>
 		<image type="div" name="class" section="source" attribute="srcset">article-image-wrapper</image>
 	</service>
