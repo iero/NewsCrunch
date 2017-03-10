@@ -94,8 +94,9 @@ for service in root.findall('service'):
 
 	print("+ RSS : "+rss_name)
 	if not os.path.exists(rss_dir):
-		print("+- "+rss_dir+" created")
+		print("+- New feed "+rss_dir+" created")
 		os.makedirs(rss_dir)
+		doTweet = False
 
 	feed = feedparser.parse(rss_url)
 
@@ -161,7 +162,7 @@ for service in root.findall('service'):
 
 			#print(news_process.summary(out_text,35))
 			filtered_post = False
-			if service.find('filters') :
+			if service.find('filters') is not None :
 				for filter in service.find('filters').findall("filter") :
 					filter_type = filter.get('type')
 					filter_value = filter.text
