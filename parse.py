@@ -29,8 +29,12 @@ def sanitizeText(text) :
 		return text
 
 #--
-debug = False
+debug = True
 doTweet = False
+
+# Tweet sizes = add 1 for extra space
+tweet_size = 140
+tweet_link_size = 1+23
 
 # Load Services Settings
 params_file="settings.xml"
@@ -77,6 +81,9 @@ fg.atom_file(feed_atom_file) # Write the ATOM feed to a file
 for service in root.findall('service'):
 	rss_name = service.get('name')
 	rss_url = service.find('url').text
+	rss_twitter = ""
+	if service.find('twitter') is not None :
+		rss_twitter = service.find('twitter').text
 
 	rss_parsed = urlparse(rss_url)
 	rss_domain = '{uri.scheme}://{uri.netloc}/'.format(uri=rss_parsed)
@@ -165,15 +172,25 @@ for service in root.findall('service'):
 
 			# Twitter
 			if not filtered_post :
-				twit_text = post.title
-				if (len(twit_text) >= 116 ) :
-					twit_text = twit_text[:115]
+				tweet_text = post.title
+				tweet_size_allowed = tweet_size - tweet_link_size
+
+				# Shorten text if needed
+				if (len(tweet_text) >= (tweet_size_allowed) ) :
+					tweet_text = tweet_text[:tweet_size_allowed-1]
+				# Add link
 				try :
 					bitly_article_url = shortener.short(web_page.url)
-					twit_text = twit_text+" "+bitly_article_url
+					tweet_text = tweet_text+" "+bitly_article_url
 				except :
-					twit_text = twit_text+" "+web_page.url
+					tweet_text = tweet_text+" "+web_page.url
 
+				# Add source if possible
+				if (len(tweet_text) + len(rss_twitter) < tweet_size_allowed) :
+						tweet_text = tweet_text+" "+rss_twitter
+				# Add tags
+
+				# Add Image & push tweet
 				if out_img :
 					print("+---> Image : " + out_img)
 					if out_img.startswith("//") :
@@ -184,9 +201,11 @@ for service in root.findall('service'):
 						out_img = dom+out_img
 					response = requests.get(out_img, headers=headers, allow_redirects=True)
 					data = response.content
-					if doTweet : r = twitterapi.request('statuses/update_with_media', {'status':twit_text}, {'media[]':data})
+					if doTweet : r = twitterapi.request('statuses/update_with_media', {'status':tweet_text}, {'media[]':data})
+					if debug : print("tweet+picture : "+tweet_text)
 				else :
-					if doTweet : r = twitterapi.request('statuses/update', {'status':twit_text})
+					if doTweet : r = twitterapi.request('statuses/update', {'status':tweet_text})
+					if debug : print("tweet : "+tweet_text)
 
 				# Add to rss
 				if out_img is not None or not out_img:

@@ -10,62 +10,75 @@
 		<feed_url>http://www.iero.org/feed/newscrunch</feed_url>
 	</settings>
 
-	<!-- French -->
+	<!-- French Digital -->
 
 	<service name="Presse Citron" lang="fr">
 		<url>http://www.presse-citron.net/feed/</url>
 		<text type="div" name="class" section="p">post-content description</text>
 		<image type="div" name="class" section="img" attribute="src">post-content description</image>
+		<twitter>@pressecitron</twitter>
 	</service>
 	<service name="Journal du Net #smartcities" lang="fr">
 		<url>http://www.journaldunet.com/smart-city/rss/</url>
-		<lang>fr</lang>
 		<text type="div" name="class" section="p">entry</text>
 		<image type="p" name="class" section="a" attribute="href">app_entry_lead</image>
+		<twitter>@journaldunet</twitter>
 		<sanitize>
 			<remove>[Info JDN] </remove>
 		</sanitize>
+		<hashtags>
+			<tag>smartcity</tag>
+		</hashtags>
 	</service>
 	<service name="Journal du Net #iot" lang="fr">
 		<url>http://www.journaldunet.com/iot/rss/</url>
-		<lang>fr</lang>
 		<text type="div" name="class" section="p">entry</text>
 		<image type="p" name="class" section="a" attribute="href">app_entry_lead</image>
+		<twitter>@journaldunet</twitter>
 		<sanitize>
 			<remove>[Info JDN] </remove>
 		</sanitize>
+		<hashtags>
+			<tag>iot</tag>
+		</hashtags>
 	</service>
 	<service name="Journal du Net #rh" lang="fr">
 		<url>http://www.journaldunet.com/e-rh/rss/</url>
-		<lang>fr</lang>
+		<twitter>@journaldunet</twitter>
 		<text type="div" name="class" section="p">entry</text>
 		<image type="p" name="class" section="a" attribute="href">app_entry_lead</image>
+		<twitter>@journaldunet</twitter>
 		<sanitize>
 			<remove>[Info JDN] </remove>
 		</sanitize>
+		<hashtags>
+			<tag>rh</tag>
+		</hashtags>
 	</service>
 	<service name="Journal du Net #cloud" lang="fr">
 		<url>http://www.journaldunet.com/cloud-computing/rss/</url>
-		<lang>fr</lang>
+		<twitter>@journaldunet</twitter>
 		<text type="div" name="class" section="p">entry</text>
 		<image type="p" name="class" section="a" attribute="href">app_entry_lead</image>
 		<sanitize>
 			<remove>[Info JDN] </remove>
 		</sanitize>
+		<hashtags>
+			<tag>cloud</tag>
+		</hashtags>
 	</service>
 	<service name="Journal du Net #bigdata" lang="fr">
 		<url>http://www.journaldunet.com/big-data/rss/</url>
-		<lang>fr</lang>
+		<twitter>@journaldunet</twitter>
 		<text type="div" name="class" section="p">entry</text>
 		<image type="p" name="class" section="a" attribute="href">app_entry_lead</image>
 		<sanitize>
 			<remove>[Info JDN] </remove>
 		</sanitize>
 	</service>
-
 	<service name="MacGeneration" lang="fr">
 		<url>http://megaflux.macg.co/</url>
-		<twitter>MacGeneration</twitter>
+		<twitter>@MacGeneration</twitter>
 		<text type="div" name="class" section="p">field-item even</text>
 		<image type="div" name="class" section="img" attribute="src">field-item even</image>
 		<filters>
@@ -74,62 +87,75 @@
 	</service>
 	<service name="Siecle Digital" lang="fr">
 		<url>https://siecledigital.fr/feed/</url>
+		<twitter>@siecledigital</twitter>
 		<text type="div" name="class" section="p">post-content description </text>
 		<image type="div" name="class" section="a" attribute="href">featured</image>
 	</service>
 	<service name="Sciences et Avenir" lang="fr">
 		<url>https://www.sciencesetavenir.fr/high-tech/rss.xml</url>
+		<twitter>@science_avenir</twitter>
 		<text type="div" name="class" section="p">corps article-sea-home-a article-sea-hightech-a</text>
 		<image type="div" name="class" section="img" attribute="src">in</image>
 	</service>
 	<service name="Itespresso" lang="fr">
 		<url>http://www.itespresso.fr/feed</url>
+		<twitter>@itespressofr</twitter>
 		<text type="div" name="class" section="p">article-content</text>
 		<image type="div" name="class" section="img" attribute="src">imageTitleWrapper</image>
 	</service>
-
-
-	<!--service name="Piwee" lang="fr">
-		<url>http://piwee.net/feed/</url>
-		<lang>fr</lang>
-		<text type="div" name="class" section="p">post</text>
-	</service-->
 	<service name="Korben" lang="fr">
 		<url>http://korben.info/feed</url>
+		<twitter>@korben</twitter>
 		<text type="div" name="class" section="p">post-content</text>
 		<image type="div" name="class" section="img" attribute="src">post-thumbnail</image>
 	</service>
 	<service name="Nouvel Obs" lang="fr">
 		<url>http://o.nouvelobs.com/high-tech/rss.xml</url>
+		<twitter>@lobs</twitter>
 		<text type="div" name="class" section="p">o-article-body</text>
 		<image type="div" name="class" section="img" attribute="src">o-article-body</image>
 	</service>
 	<service name="Les echos business" lang="fr">
 		<url>https://business.lesechos.fr/rss/dn.xml</url>
+		<twitter>@EchosBusiness</twitter>
 		<text type="div" name="class" section="p">main-content content-article</text>
 		<image type="div" name="class" section="img" attribute="srcset">picture-article</image>
 	</service>
 	<service name="Maddyness" lang="fr">
 		<url>https://www.maddyness.com/feed/</url>
-		<twitter>bymaddyness</twitter>
+		<twitter>@bymaddyness</twitter>
 		<text type="div" name="class" section="p">inherit-color-parent article-content col-md-8</text>
 		<image type="div" name="class" section="source" attribute="srcset">article-image-wrapper</image>
 	</service>
 	<service name="Usine Digitale" lang="fr">
 		<url>http://www.usine-digitale.fr/rss</url>
+		<twitter>@LUsineDigitale</twitter>
 		<text type="div" name="class" section="p">blocTexteType1</text>
 		<image type="figure" name="class" section="img" attribute="src">blocImageType2</image>
 	</service>
+		<!--service name="Piwee" lang="fr">
+			<url>http://piwee.net/feed/</url>
+			<lang>fr</lang>
+			<text type="div" name="class" section="p">post</text>
+		</service-->
 
 	<!-- To incorporate
 	nextimpact
 	wall street journal
-	rue89
+	http://www.lemondeinformatique.fr/actualites/lire-hackerone-un-service-de-bug-bounty-gratuit-pour-les-projets-open-source-67547.html
 	-->
+
+	<!-- French Others -->
+
 	<service name="Rue89 #planete" lang="fr">
 		<url>http://tempsreel.nouvelobs.com/rue89/rue89-planete/rss.xml</url>
+		<twitter>@rue89</twitter>
 		<text type="section" name="class" section="p">obs-content</text>
 		<image type="section" name="class" section="img" attribute="src">obs-content</image>
+		<hashtags>
+			<tag>planete</tag>
+			<tag>rue89</tag>
+		</hashtags>
 	</service>
 
 

@@ -18,10 +18,7 @@ import export_to_es
 
 # In[2]:
 
-export_to_es.walk_path("/tmp/newscruncher/fr")
+export_to_es.walk_path("/Users/greg/NewsCrunch/output/fr")
 
 
 # In[ ]:
-
-
-
