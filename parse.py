@@ -82,8 +82,8 @@ for service in root.findall('service'):
 	rss_name = service.get('name')
 	rss_url = service.find('url').text
 	rss_twitter = ""
-	if service.find('twitter') is not None :
-		rss_twitter = service.find('twitter').text
+	if service.find('twitter_mention') is not None :
+		rss_twitter = service.find('twitter_mention').text
 
 	rss_parsed = urlparse(rss_url)
 	rss_domain = '{uri.scheme}://{uri.netloc}/'.format(uri=rss_parsed)
@@ -93,6 +93,7 @@ for service in root.findall('service'):
 	rss_dir = out_directory + '/' + rss_lang +'/'+ rss_dir
 
 	print("+ RSS : "+rss_name)
+
 	if not os.path.exists(rss_dir):
 		print("+- New feed "+rss_dir+" created")
 		os.makedirs(rss_dir)
@@ -101,12 +102,23 @@ for service in root.findall('service'):
 	feed = feedparser.parse(rss_url)
 
 	for post in feed.entries:
+
+		# Get pages from selected category
+		filtered_post = False
+		if service.find('selection') is not None :
+			filtered_post = True
+			for sel in service.find('selection').findall("select") :
+				sel_type = sel.get('type')
+				sel_value = sel.text
+				if (sel_type == "url") and (sel_value in post.link) :
+					filtered_post = False
+
 		link = post.link.rsplit('?', 1)[0]
 		link = link.rsplit('#', 1)[0]
 		entry=parseURLName(link)
 
 		# Continue if new page and test redirection
-		if not os.path.isfile(rss_dir+'/'+entry):
+		if not filtered_post and not os.path.isfile(rss_dir+'/'+entry):
 			if debug : print("+-> " + link)
 			if debug : print("+--> " + rss_dir+'/'+entry)
 
@@ -117,9 +129,18 @@ for service in root.findall('service'):
 				if debug : print("+--> " + link)
 				web_page = requests.get(link, headers=headers)
 
+				# Get pages from selected category
+				if service.find('selection') is not None :
+					filtered_post = True
+					for sel in service.find('selection').findall("select") :
+						sel_type = sel.get('type')
+						sel_value = sel.text
+						if (sel_type == "url") and (sel_value in web_page.url) :
+							filtered_post = False
+
 			# Sanitize title
 			post_title = post.title
-			if service.find('sanitize') :
+			if service.find('sanitize') is not None :
 				for removedField in service.find('sanitize').findall("remove") :
 					post_title = post_title.replace(removedField.text,"")
 
@@ -161,7 +182,6 @@ for service in root.findall('service'):
 					print(out_img)
 
 			#print(news_process.summary(out_text,35))
-			filtered_post = False
 			if service.find('filters') is not None :
 				for filter in service.find('filters').findall("filter") :
 					filter_type = filter.get('type')
@@ -173,7 +193,7 @@ for service in root.findall('service'):
 
 			# Twitter
 			if not filtered_post :
-				tweet_text = post.title
+				tweet_text = post_title
 				tweet_size_allowed = tweet_size - tweet_link_size
 
 				# Shorten text if needed
@@ -213,7 +233,7 @@ for service in root.findall('service'):
 					out_text="<img src=\""+out_img+"\"/><p>"+out_text+"</p>"
 				fe = fg.add_entry()
 				fe.id(entry)
-				fe.title(post.title)
+				fe.title(post_title)
 				fe.author(name=rss_name)
 				#fe.updated(post.updated)
 				fe.link(href=post.link)

@@ -2,7 +2,7 @@ import elasticsearch
 import requests
 import json
 import time
-import nltk 
+import nltk
 from nltk.corpus import stopwords
 
 es_host = "localhost:9200"
@@ -27,13 +27,15 @@ def create_index(es_host):
                     "mainsentences" : { "type": "text" },
                     "mainwords" : { "type": "keyword" },
                     "cluster": {  "type": "text" },
+                    "has_similar": {  "type": "text" },
                     "language": { "type": "keyword" },
                     "published": { "type": "date",
                                    "format": "yyyy-MM-dd HH:mm:ss"},
-                    "is_tagged": { "type": "boolean" }
+                    "is_tagged_by_human": { "type": "text" },
+                    "is_tagged_by_ai": { "type": "text" }
                      }
                 }
-            }            
+            }
         }
     try:
         es.indices.delete(index=es_index)
@@ -41,7 +43,7 @@ def create_index(es_host):
         print("cannot delete index")
         pass
     es.indices.create(index=es_index, body=body)
-    
+
 ##------------------
 #-------------------
 def delete_index(es_host):

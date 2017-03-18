@@ -29,3 +29,4 @@ text="Technologies d'Amazon Go "+bitly_article_url+" @sciences_avenir "
 response = urllib.request.urlopen(picture_url)
 data = response.read()
 r = twitterapi.request('statuses/update_with_media', {'status':text}, {'media[]':data})
+print(r.text)
