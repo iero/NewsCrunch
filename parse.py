@@ -14,6 +14,8 @@ import xml.etree.ElementTree as ET
 from TwitterAPI import TwitterAPI
 from pyshorteners import Shortener
 
+#import elastic.export_to_es as es
+
 def parseURLName(url) :
 	entry_parsed = urlparse(post.link)
 	entry_domain = '{uri.scheme}://{uri.netloc}/'.format(uri=entry_parsed)
@@ -142,7 +144,17 @@ for service in root.findall('service'):
 			post_title = post.title
 			if service.find('sanitize') is not None :
 				for removedField in service.find('sanitize').findall("remove") :
-					post_title = post_title.replace(removedField.text,"")
+					if remove.Field.get('type') == "title" :
+						post_title = post_title.replace(removedField.text,"")
+
+			# Remove ad post.. based on title
+			if service.find('filters') is not None :
+				for filter in service.find('filters').findall("filter") :
+					filter_type = filter.get('type')
+					filter_value = filter.text
+					if filter_type == "title" and filter_value in post_title.lower() :
+						print("filter matched")
+						filtered_post = True
 
 			# Parse page
 			#print("+-> " + web_page.url)
@@ -227,6 +239,9 @@ for service in root.findall('service'):
 				else :
 					if doTweet : r = twitterapi.request('statuses/update', {'status':tweet_text})
 					if debug : print("tweet : "+tweet_text)
+
+				# Add to index
+				#es.export_to_es_from_text(out_text,rss_name,post_title)
 
 				# Add to rss
 				if out_img is not None or not out_img:

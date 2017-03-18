@@ -18,11 +18,11 @@ from nltk.tag.stanford import StanfordPOSTagger #import the stanford pos tagger
 
 #variables
 #change the path regarding your installation of the stanford pos tagger
-path_stanford_model='/tmp/newscruncher/POSTAGGER/stanford-postagger-full-2014-08-27/models/french.tagger'
-path_stanford_tagger_jar='/tmp/newscruncher/POSTAGGER/stanford-postagger-full-2014-08-27/stanford-postagger.jar' 
+#path_stanford_model='/tmp/newscruncher/POSTAGGER/stanford-postagger-full-2014-08-27/models/french.tagger'
+#path_stanford_tagger_jar='/tmp/newscruncher/POSTAGGER/stanford-postagger-full-2014-08-27/stanford-postagger.jar'
 
 #retrieve stanford pos tagger for french
-st = StanfordPOSTagger(path_stanford_model,path_stanford_tagger_jar)
+#st = StanfordPOSTagger(path_stanford_model,path_stanford_tagger_jar)
 
 #create stopword list
 stopwords_base = ""
@@ -44,7 +44,7 @@ verbes_ternes = ['être', 'etre', 'est', 'sont','fut','êtes',
                  'faut', 'falloir', 'font','fait', 'faire', 'faites',
                  'avoir','à','avez',
                  'devoir', 'doit','doivent','devrait', 'devraient','devez',
-                 'permet', 'permettre', 
+                 'permet', 'permettre',
                  'voir', 'vu','voyez',
                  'savoir','sait','su','savez',
                  'pouvoir', 'peut', 'peuvent', 'pouvez',
@@ -60,7 +60,7 @@ stopwords_fr += punctuation + useless_words + verbes_ternes + determinants + mon
 grammar_french = r"""
     NBAR:
         {<N.*|ADJ|P>*<N.*>} # nouns and adjectives, terminated with nouns
-            
+
     NP:
         {<NBAR>}
         {<NBAR><P><NBAR>} # above, connected with dans, de, sur, etc.
@@ -76,12 +76,12 @@ def leaves(tree):
     """find NP (npun) leaf nodes in chunck tree"""
     for subtree in tree.subtrees(filter = lambda t: t.label()=='NP'):
         yield subtree.leaves()
-        
+
 def normalise(word):
     #define lemmatizer and stemmer
     lemmatizer=nltk.WordNetLemmatizer()
     stemmer=nltk.stem.porter.PorterStemmer()
-    
+
     """normlaisde in lowcase and stem them"""
     word = word.lower()
     #word = stemmer.stem(word)
@@ -97,7 +97,7 @@ def get_terms(tree):
     for leaf in leaves(tree):
         term = [normalise(w) for w,t in leaf if acceptable_word(normalise(w))]
         yield term
-        
+
 #----------------------------
 #----------------------------
 #correct the punctuation in the texrt
@@ -110,7 +110,7 @@ def replacepunct(text):
     text = text.replace("’",  " ’ ")
     text = text.replace("?",  " ? ")
     text = text.replace("!",  " ! ")
-    text = text.replace(":",  " : ")    
+    text = text.replace(":",  " : ")
     return text
 
 #----------------------------
@@ -126,9 +126,10 @@ def text_fdist(text, min_occurence):
     tokens = tokenizer.tokenize(text)
     #remove stopwords
     tokens = [token.lower() for token in tokens if token.lower() not in stopwords_fr]
+    print(tokens)
 
     fdist_in = FreqDist(tokens)
-    
+
     #filter words with more than one occurence
     fdist = list(filter(lambda x: x[1]>=min_occurence,fdist_in.items()))
     return fdist
@@ -143,37 +144,37 @@ def check_word_existence(word,text):
 
     #tokenise text:
     tokens = tokenizer.tokenize(text)
-    
+
     #check presence:
     check = False
     for i in range (0,len(tokens)):
         if word == tokens[i]:
                 check = True
-                
+
     return check
 
 #---------------------------
 #---------------------------
 #extract main sentences
 def extract_sentences_fr(text, min_word_frequency):
-      
+
     #correct punctuation
     text = replacepunct(text)
-    
+
     # create the chunker to retrieve sentences regarding specified grammar
     chunker = nltk.RegexpParser(grammar_french)
-    
+
     #tag tokens (i.e. define nouns, verbs, etc.)
     tokens = tokenizer.tokenize(text)
 
     postokens = st.tag(tokens)
-    
+
     #build a tree based on tagged tokens:
     tree = chunker.parse(postokens)
-    
+
     #extract all sentences from the text as a list, tuples.
     main_sentences = list(get_terms(tree))
-    
+
     #combines words from tuples into a single phrase
     sentences = [""]*len(main_sentences)
 
@@ -186,9 +187,9 @@ def extract_sentences_fr(text, min_word_frequency):
 
     #calculate frequence of words in the whole text
     mostcommon = text_fdist(text,min_word_frequency)
-    
+
     final_sentences=['']*len(sentences)
-    
+
     #extract the sentences containing more frequent words
     for i in range (0,len(sentences)):
         check = False
@@ -197,30 +198,32 @@ def extract_sentences_fr(text, min_word_frequency):
                 check = True
         if check == True:
             final_sentences[i]=sentences[i]
-    
+
     #filter to remove empty list
     final_sentences=filter(None,final_sentences)
-    
+
     #remove duplicates
     final_sentences = list(set(final_sentences))
-    
+
     return final_sentences
 
 #---------------------------
 #---------------------------
 #extract main sentences
 def extract_words_fr(text, min_word_frequency):
-    
+
     #correct punctuation
     text = replacepunct(text)
-    
+    print("Texte :")
+
     #calculate frequence of words in the whole text
     mostcommon = text_fdist(text,min_word_frequency)
-    
+    print(mostcommon)
+
     final_words=['']*len(mostcommon)
-    
+
     #extract the words
     for i in range (0,len(mostcommon)):
-            final_words[i]=mostcommon[i][0]  
-    
+            final_words[i]=mostcommon[i][0]
+
     return final_words

@@ -96,12 +96,12 @@ def export_to_es_from_text(text_of_document, source, title):
     nb_of_words = 1+len(tokenizer.tokenize(textstring))/100
 
     if language == 'french':
-        text_summary = Summary.summary(directory + '/' + title,language,3)
+        text_summary = Summary.summary(textstring,language,3)
         #mainsentences = extract_main_sentences_fr.extract_sentences_fr(textstring,nb_of_words)
         mainsentences = ""
         mainwords = extract_main_sentences_fr.extract_words_fr(textstring,nb_of_words)
     elif language == 'english':
-        text_summary = Summary.summary(directory + '/' + title,language,3)
+        text_summary = Summary.summary(textstring,language,3)
         #mainsentences = extract_main_sentences_en.extract_sentences_en(textstring,nb_of_words)
         mainsentences = ""
         mainwords = extract_main_sentences_en.extract_words_en(textstring,nb_of_words)

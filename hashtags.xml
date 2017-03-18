@@ -1,11 +1,13 @@
 <?xml version="1.0"?>
 <data>
   <hashtags>
-    apple
-    iot
-    nomad
+    <tag>apple</tag>
+    <tag>iot</tag>
+    <tag>nomad</tag>
   </hashtags>
-  san francisco sf
-  bug bounty bugbounty
-  French tech frenchtech
+  <simplify>
+    <tag value="sf">san francisco</tag>
+    <tag value="bugbounty">bug bounty</tag>
+    <tag value="frenchtech">french tech</tag>
+  </simplify>
 </data>

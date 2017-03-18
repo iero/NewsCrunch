@@ -27,7 +27,7 @@
 		<twitter_account>@journaldunet</twitter_account>
 		<twitter_mention>#jdn</twitter_mention>
 		<sanitize>
-			<remove>[Info JDN] </remove>
+			<remove type="title">[Info JDN] </remove>
 		</sanitize>
 		<hashtags>
 			<tag>smartcity</tag>
@@ -40,7 +40,7 @@
 		<twitter_account>@journaldunet</twitter_account>
 		<twitter_mention>#jdn</twitter_mention>
 		<sanitize>
-			<remove>[Info JDN] </remove>
+			<remove type="title">[Info JDN] </remove>
 		</sanitize>
 		<hashtags>
 			<tag>iot</tag>
@@ -54,7 +54,7 @@
 		<twitter_account>@journaldunet</twitter_account>
 		<twitter_mention>#jdn</twitter_mention>
 		<sanitize>
-			<remove>[Info JDN] </remove>
+			<remove type="title">[Info JDN] </remove>
 		</sanitize>
 		<hashtags>
 			<tag>rh</tag>
@@ -67,7 +67,7 @@
 		<text type="div" name="class" section="p">entry</text>
 		<image type="p" name="class" section="a" attribute="href">app_entry_lead</image>
 		<sanitize>
-			<remove>[Info JDN] </remove>
+			<remove type="title">[Info JDN] </remove>
 		</sanitize>
 		<hashtags>
 			<tag>cloud</tag>
@@ -80,7 +80,7 @@
 		<text type="div" name="class" section="p">entry</text>
 		<image type="p" name="class" section="a" attribute="href">app_entry_lead</image>
 		<sanitize>
-			<remove>[Info JDN] </remove>
+			<remove type="title">[Info JDN] </remove>
 		</sanitize>
 	</service>
 	<service name="MacGeneration" lang="fr">
@@ -90,6 +90,10 @@
 		<text type="div" name="class" section="p">field-item even</text>
 		<image type="div" name="class" section="img" attribute="src">field-item even</image>
 		<filters>
+			<filter type="title">refurb</filter>
+			<filter type="title">concours</filter>
+			<filter type="title">forums</filter>
+			<filter type="title">iconcept</filter>
 			<filter type="section" section="h2">Promo</filter>
 		</filters>
 	</service>
@@ -142,9 +146,9 @@
 		<text type="div" name="class" section="p">inherit-color-parent article-content col-md-8</text>
 		<image type="div" name="class" section="source" attribute="srcset">article-image-wrapper</image>
 		<sanitize>
-			<remove>#MaddyFeed : </remove>
-			<remove>#Tribune : </remove>
-			<remove>#MaddyMoney : </remove>
+			<remove type="title">#MaddyFeed : </remove>
+			<remove type="title">#Tribune : </remove>
+			<remove type="title">#MaddyMoney : </remove>
 		</sanitize>
 	</service>
 	<service name="Usine Digitale" lang="fr">
@@ -209,12 +213,15 @@
 	https://www.ted.com/talks/rss
 -->
 
-	<!--service name="The Verge" lang="en">
+	<service name="The Verge" lang="en">
 		<url>http://www.theverge.com/rss/index.xml</url>
+		<twitter_account>@verge</twitter_account>
+		<twitter_mention>#theverge</twitter_mention>
 		<text type="div" name="class" section="p">c-entry-content</text>
 		<image type="picture" name="class" section="img" attribute="src">c-picture</image>
 	</service>
-	<service name="The Hacker News" lang="en">
+
+	<!--service name="The Hacker News" lang="en">
 		<url>http://thehackernews.com/feeds/posts/default</url>
 		<text type="div" name="class" section="div">articlebodyonly</text>
 		<image type="div" name="class" section="img" attribute="src">articlebodyonly</image>

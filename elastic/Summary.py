@@ -8,8 +8,8 @@ from sumy.nlp.stemmers import Stemmer
 from sumy.utils import get_stop_words
 
 
-def summary(PATH,LANGUAGE,SENTENCES_COUNT):
-    parser = PlaintextParser.from_file(PATH, Tokenizer(LANGUAGE))
+def summary(TEXT,LANGUAGE,SENTENCES_COUNT):
+    parser = PlaintextParser.from_string(TEXT, Tokenizer(LANGUAGE))
     stemmer = Stemmer(LANGUAGE)
 
     summarizer = Summarizer(stemmer)

@@ -13,6 +13,7 @@ TYPE="articles"
 #---------------------
 #create index in Elastic
 def create_index(es_host):
+    print("Create index")
     es = elasticsearch.Elasticsearch(hosts=es_host)
     body = {
         "mappings" : {
@@ -49,3 +50,5 @@ def create_index(es_host):
 def delete_index(es_host):
     es = elasticsearch.Elasticsearch(hosts=es_host)
     es.indices.delete(index=es_index)
+
+create_index(es_host)

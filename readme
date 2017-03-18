@@ -24,8 +24,16 @@ screen -S newscrunch #creer la session
 
 screen -r newscrunch #rattacher la session
 
+# ELK
 docker run -p 5601:5601 -p 9200:9200 -p 5044:5044 -it --name elk sebp/elk
+sudo docker start elk
+sudo docker stop elk
 
+# Test elk
+Elastic : http://localhost:9200/
+Kibana : http://localhost:5600
+
+# Create index : scripts/create_index.py
 
 pip install elasticsearch
 pip install sumy
