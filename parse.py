@@ -31,7 +31,7 @@ def sanitizeText(text) :
 		return text
 
 #--
-debug = True
+debug = False
 doTweet = False
 
 # Tweet sizes = add 1 for extra space
@@ -144,7 +144,7 @@ for service in root.findall('service'):
 			post_title = post.title
 			if service.find('sanitize') is not None :
 				for removedField in service.find('sanitize').findall("remove") :
-					if remove.Field.get('type') == "title" :
+					if removedField.get('type') == "title" :
 						post_title = post_title.replace(removedField.text,"")
 
 			# Remove ad post.. based on title

@@ -2,6 +2,7 @@
 <data>
 
 	<settings>
+		<author>Gregori Fabre</author>
 		<output>output</output>
 		<pitch>Fil d'info en continu sur le #digital par Gregori Fabre (@fabre_gregori) Digital Advisor Total EP #Innovation #TransfoNum #Greentech #Startup</pitch>
 		<User-Agent>'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'</User-Agent>
@@ -94,6 +95,7 @@
 			<filter type="title">concours</filter>
 			<filter type="title">forums</filter>
 			<filter type="title">iconcept</filter>
+			<filter type="title">promo</filter>
 			<filter type="section" section="h2">Promo</filter>
 		</filters>
 	</service>
@@ -184,8 +186,6 @@
 		</service-->
 
 	<!-- To incorporate
-
-	Blog du moderateur
 	nextimpact
 	wall street journal
 	http://www.lemondeinformatique.fr/actualites/lire-hackerone-un-service-de-bug-bounty-gratuit-pour-les-projets-open-source-67547.html
@@ -221,11 +221,22 @@
 		<image type="picture" name="class" section="img" attribute="src">c-picture</image>
 	</service>
 
-	<!--service name="The Hacker News" lang="en">
+	<service name="The Hacker News" lang="en">
 		<url>http://thehackernews.com/feeds/posts/default</url>
 		<text type="div" name="class" section="div">articlebodyonly</text>
 		<image type="div" name="class" section="img" attribute="src">articlebodyonly</image>
+		<twitter_account>@TheHackersNews</twitter_account>
+		<twitter_mention>#hackers</twitter_mention>
+	</service>
+	<!-- Todo : Spaces ?
+http://thelongandshort.org/spaces/hot-desks-design-thinking-ideo
+-->
+	<!--service name="Long and Short" lang="en">
+		<url>http://thelongandshort.org/feed.rss</url>
+		<text type="div" name="class" section="div">o-article__body</text>
+		<image type="div" name="class" section="img" attribute="src">o-article__body</image>
+		<twitter_account>@longandshortmag</twitter_account>
+		<twitter_mention>#longandshort</twitter_mention>
 	</service-->
-
 
 </data>
