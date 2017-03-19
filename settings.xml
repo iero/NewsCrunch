@@ -147,6 +147,9 @@
 		<twitter_mention>#maddyness</twitter_mention>
 		<text type="div" name="class" section="p">inherit-color-parent article-content col-md-8</text>
 		<image type="div" name="class" section="source" attribute="srcset">article-image-wrapper</image>
+		<filters>
+			<filter type="title">#mcal</filter>
+		</filters>
 		<sanitize>
 			<remove type="title">#MaddyFeed : </remove>
 			<remove type="title">#Tribune : </remove>
@@ -219,6 +222,12 @@
 		<twitter_mention>#theverge</twitter_mention>
 		<text type="div" name="class" section="p">c-entry-content</text>
 		<image type="picture" name="class" section="img" attribute="src">c-picture</image>
+		<selection>
+			<select type="div" value="c-entry-group-labels c-entry-group-labels--article" section="span">Tech</select>
+			<select type="div" value="c-entry-group-labels c-entry-group-labels--article" section="span">Science</select>
+			<select type="div" value="c-entry-group-labels c-entry-group-labels--article" section="span">Reviews</select>
+		</selection>
+
 	</service>
 
 	<service name="The Hacker News" lang="en">

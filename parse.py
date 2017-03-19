@@ -107,13 +107,13 @@ for service in root.findall('service'):
 
 		# Get pages from selected category
 		filtered_post = False
-		if service.find('selection') is not None :
-			filtered_post = True
-			for sel in service.find('selection').findall("select") :
-				sel_type = sel.get('type')
-				sel_value = sel.text
-				if (sel_type == "url") and (sel_value in post.link) :
-					filtered_post = False
+		#if service.find('selection') is not None :
+		#	filtered_post = True
+		#	for sel in service.find('selection').findall("select") :
+		#		sel_type = sel.get('type')
+		#		sel_value = sel.text
+		#		if (sel_type == "url") and (sel_value in post.link) :
+		#			filtered_post = False
 
 		link = post.link.rsplit('?', 1)[0]
 		link = link.rsplit('#', 1)[0]
@@ -131,14 +131,31 @@ for service in root.findall('service'):
 				if debug : print("+--> " + link)
 				web_page = requests.get(link, headers=headers)
 
-				# Get pages from selected category
-				if service.find('selection') is not None :
-					filtered_post = True
-					for sel in service.find('selection').findall("select") :
-						sel_type = sel.get('type')
-						sel_value = sel.text
-						if (sel_type == "url") and (sel_value in web_page.url) :
-							filtered_post = False
+			# Parse page
+			print("+-> " + web_page.url)
+			soup = BeautifulSoup(web_page.content, "html.parser")
+
+			# Get pages from selected category
+			if service.find('selection') is not None :
+				filtered_post = True
+				for sel in service.find('selection').findall("select") :
+					sel_type = sel.get('type')
+					sel_value = sel.get('value')
+					sel_filter = sel.text
+					if (sel_type == "url") and (sel_value in web_page.url) :
+						filtered_post = False
+					elif (sel_type == "div") :
+						sel_section = sel.get('section')
+						text_sec=soup.find(sel_type, class_=sel_value)
+						#print(text_sec)
+						for t in text_sec.find_all(sel_section):
+							text=t.get_text()
+							print(text)
+							if sel_filter in text :
+								filtered_post = False
+								print("not filtered")
+							else :
+								print("filtered")
 
 			# Sanitize title
 			post_title = post.title
@@ -155,10 +172,6 @@ for service in root.findall('service'):
 					if filter_type == "title" and filter_value in post_title.lower() :
 						print("filter matched")
 						filtered_post = True
-
-			# Parse page
-			#print("+-> " + web_page.url)
-			soup = BeautifulSoup(web_page.content, "html.parser")
 
 			# Grab text
 			rss_text_type = service.find('text').get('type')
@@ -225,7 +238,7 @@ for service in root.findall('service'):
 
 				# Add Image & push tweet
 				if out_img :
-					print("+---> Image : " + out_img)
+					if debug : print("+---> Image : " + out_img)
 					if out_img.startswith("//") :
 						out_img = "https:"+out_img
 					elif out_img.startswith("/") :
