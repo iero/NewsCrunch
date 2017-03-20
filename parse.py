@@ -132,7 +132,7 @@ for service in root.findall('service'):
 				web_page = requests.get(link, headers=headers)
 
 			# Parse page
-			print("+-> " + web_page.url)
+			if debug : print("+-> " + web_page.url)
 			soup = BeautifulSoup(web_page.content, "html.parser")
 
 			# Get pages from selected category
@@ -148,14 +148,13 @@ for service in root.findall('service'):
 						sel_section = sel.get('section')
 						text_sec=soup.find(sel_type, class_=sel_value)
 						#print(text_sec)
-						for t in text_sec.find_all(sel_section):
-							text=t.get_text()
-							print(text)
-							if sel_filter in text :
-								filtered_post = False
-								print("not filtered")
-							else :
-								print("filtered")
+						if text_sec is not None :
+							for t in text_sec.find_all(sel_section):
+								if sel_filter in t :
+									filtered_post = False
+									if debug : print("+--> page allowed : "+sel_filter)
+								#else :
+								#	if debug : print("+--> page filtered : "+sel_filter)
 
 			# Sanitize title
 			post_title = post.title

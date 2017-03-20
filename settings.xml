@@ -162,6 +162,9 @@
 		<twitter_mention>#usine #digital</twitter_mention>
 		<text type="div" name="class" section="p">blocTexteType1</text>
 		<image type="figure" name="class" section="img" attribute="src">blocImageType2</image>
+		<filters>
+			<filter type="title">quoi de neuf</filter>
+		</filters>
 	</service>
 	<service name="Blog du Moderateur" lang="fr">
 		<url>http://feeds.feedburner.com/captainjob</url>
@@ -169,6 +172,9 @@
 		<twitter_mention>#blogmod</twitter_mention>
 		<text type="div" name="class" section="p">entry-content</text>
 		<image type="div" name="class" section="img" attribute="src">entry-content</image>
+		<filters>
+			<filter type="title">offres d'emploi</filter>
+		</filters>
 	</service>
 	<service name="Les echos #hightech" lang="fr">
 		<url type="html">https://www.lesechos.fr/tech-medias/hightech/index.php</url>
@@ -181,6 +187,27 @@
 			<select type="url">https://www.lesechos.fr/tech-medias/hightech</select>
 		</selection>
 	</service>
+
+	<service name="Frenchweb" lang="fr">
+		<url type="rss">http://feeds.feedburner.com/frenchweb</url>
+		<twitter_account>@LesEchos</twitter_account>
+		<twitter_mention>#frenchweb</twitter_mention>
+		<text type="div" name="class" section="p">page-content</text>
+		<image type="div" name="class" section="img" attribute="src">page-content</image>
+		<!-- add tag support -->
+		<tags type="div" section="a">categories</tags>
+		<filters>
+			<filter type="title">[INSIDERS]</filter>
+			<filter type="title">[EMPLOI]</filter>
+			<filter type="title">de la semaine</filter>
+			<filter type="title">ne fallait pas manquer</filter>
+		</filters>
+		<sanitize>
+			<remove type="title">[FW Radar] </remove>
+		</sanitize>
+	</service>
+
+
 	<!--service name="Piwee" lang="fr">
 			<url>http://piwee.net/feed/</url>
 			<twitter_account>@piweeFR</twitter_account>
