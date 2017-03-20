@@ -169,7 +169,7 @@ for service in root.findall('service'):
 					filter_type = filter.get('type')
 					filter_value = filter.text
 					if filter_type == "title" and filter_value in post_title.lower() :
-						print("filter matched")
+						print("Title filter matched on "+filter_value)
 						filtered_post = True
 
 			# Grab text
@@ -203,7 +203,7 @@ for service in root.findall('service'):
 				#print(img_sec)
 				for element in img_sec.findAll(rss_img_section):
 					out_img=element.get(rss_img_attribute)
-					print(out_img)
+					if debug : print(out_img)
 
 			#print(news_process.summary(out_text,35))
 			if service.find('filters') is not None :
@@ -212,7 +212,7 @@ for service in root.findall('service'):
 					filter_value = filter.text
 					filter_result = soup.find(filter_type, class_=filter_value)
 					if filter_result is not None :
-						print("filter matched")
+						print("Content filter matched on "+filter_value)
 						filtered_post = True
 
 			# Twitter
