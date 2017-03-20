@@ -190,13 +190,14 @@
 
 	<service name="Frenchweb" lang="fr">
 		<url type="rss">http://feeds.feedburner.com/frenchweb</url>
-		<twitter_account>@LesEchos</twitter_account>
+		<twitter_account>@</twitter_account>
 		<twitter_mention>#frenchweb</twitter_mention>
 		<text type="div" name="class" section="p">page-content</text>
-		<image type="div" name="class" section="img" attribute="src">page-content</image>
+		<image type="div" name="class" section="img" attribute="src">page-featured-image</image>
 		<!-- add tag support -->
 		<tags type="div" section="a">categories</tags>
 		<filters>
+			<filter type="title">SEN#7</filter>
 			<filter type="title">[INSIDERS]</filter>
 			<filter type="title">[EMPLOI]</filter>
 			<filter type="title">de la semaine</filter>
