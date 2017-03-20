@@ -197,9 +197,9 @@
 		<!-- add tag support -->
 		<tags type="div" section="a">categories</tags>
 		<filters>
-			<filter type="title">SEN#7</filter>
-			<filter type="title">[INSIDERS]</filter>
-			<filter type="title">[EMPLOI]</filter>
+			<filter type="title">sen#7</filter>
+			<filter type="title">[insiders]</filter>
+			<filter type="title">[emploi]</filter>
 			<filter type="title">de la semaine</filter>
 			<filter type="title">ne fallait pas manquer</filter>
 		</filters>

@@ -1,4 +1,6 @@
 import os
+import socket
+
 import urllib3
 import requests
 import feedparser
@@ -32,7 +34,13 @@ def sanitizeText(text) :
 
 #--
 debug = False
-doTweet = False
+doTweet = True
+
+# debug on local
+if "digital-gf.local" in socket.gethostname() :
+	print("Local testing...")
+	debug= True
+	doTweet=False
 
 # Tweet sizes = add 1 for extra space
 tweet_size = 140
@@ -153,8 +161,6 @@ for service in root.findall('service'):
 								if sel_filter in t :
 									filtered_post = False
 									if debug : print("+--> page allowed : "+sel_filter)
-								#else :
-								#	if debug : print("+--> page filtered : "+sel_filter)
 
 			# Sanitize title
 			post_title = post.title
@@ -168,6 +174,7 @@ for service in root.findall('service'):
 				for filter in service.find('filters').findall("filter") :
 					filter_type = filter.get('type')
 					filter_value = filter.text
+					#print("test "+filter_value+" in "+post_title.lower())
 					if filter_type == "title" and filter_value in post_title.lower() :
 						print("Title filter matched on "+filter_value)
 						filtered_post = True
@@ -201,11 +208,15 @@ for service in root.findall('service'):
 			img_sec=soup.find(rss_img_type, class_=rss_img_value)
 			if img_sec is not None :
 				#print(img_sec)
-				for element in img_sec.findAll(rss_img_section):
-					out_img=element.get(rss_img_attribute)
-					if debug : print(out_img)
+				out_img=img_sec.find(rss_img_section).get(rss_img_attribute)
+				if debug : print(out_img)
+
+				#for element in img_sec.findAll(rss_img_section):
+				#	out_img=element.get(rss_img_attribute)
+				#	if debug : print(out_img)
 
 			#print(news_process.summary(out_text,35))
+			#Filters title ?
 			if service.find('filters') is not None :
 				for filter in service.find('filters').findall("filter") :
 					filter_type = filter.get('type')
