@@ -151,9 +151,13 @@
 			<filter type="title">#mcal</filter>
 		</filters>
 		<sanitize>
-			<remove type="title">#MaddyFeed : </remove>
+			<!--remove type="title">#MaddyFeed : </remove>
 			<remove type="title">#Tribune : </remove>
 			<remove type="title">#MaddyMoney : </remove>
+			<remove type="title">#MaddyFlash : </remove>
+			<remove type="title">#Exclu : </remove>
+			<remove type="title">#Étude</remove-->
+			<remove type="title">#.*?:</remove>
 		</sanitize>
 	</service>
 	<service name="Usine Digitale" lang="fr">
@@ -171,7 +175,7 @@
 		<twitter_account>@BlogModerateur</twitter_account>
 		<twitter_mention>#blogmod</twitter_mention>
 		<text type="div" name="class" section="p">entry-content</text>
-		<image type="div" name="class" section="img" attribute="src">entry-content</image>
+		<image type="div" name="class" section="img" attribute="data-lazy-original">entry-content</image>
 		<filters>
 			<filter type="title">offres d'emploi</filter>
 		</filters>
@@ -200,6 +204,7 @@
 			<filter type="title">sen#7</filter>
 			<filter type="title">[insiders]</filter>
 			<filter type="title">[emploi]</filter>
+			<filter type="title">[numbers]</filter>
 			<filter type="title">de la semaine</filter>
 			<filter type="title">ne fallait pas manquer</filter>
 		</filters>
@@ -217,6 +222,7 @@
 		</service-->
 
 	<!-- To incorporate
+	1 innovation par jour
 	nextimpact
 	wall street journal
 	http://www.lemondeinformatique.fr/actualites/lire-hackerone-un-service-de-bug-bounty-gratuit-pour-les-projets-open-source-67547.html
@@ -235,8 +241,6 @@
 			<tag>rue89</tag>
 		</hashtags>
 	</service>
-
-
 
 	<!-- English -->
 

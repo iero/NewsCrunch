@@ -1,5 +1,6 @@
 import os
 import socket
+import re
 
 import urllib3
 import requests
@@ -167,7 +168,8 @@ for service in root.findall('service'):
 			if service.find('sanitize') is not None :
 				for removedField in service.find('sanitize').findall("remove") :
 					if removedField.get('type') == "title" :
-						post_title = post_title.replace(removedField.text,"")
+						post_title = re.sub(removedField.text,'',post_title)
+						#post_title = post_title.replace(removedField.text,"")
 
 			# Remove ad post.. based on title
 			if service.find('filters') is not None :
@@ -206,8 +208,8 @@ for service in root.findall('service'):
 
 			out_img=""
 			img_sec=soup.find(rss_img_type, class_=rss_img_value)
-			if img_sec is not None :
-				#print(img_sec)
+			#print(img_sec)
+			if img_sec is not None and img_sec.find(rss_img_section) is not None :
 				out_img=img_sec.find(rss_img_section).get(rss_img_attribute)
 				if debug : print(out_img)
 
@@ -255,10 +257,15 @@ for service in root.findall('service'):
 						parsed_web_page = urlparse(web_page.url)
 						dom =  '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_web_page)
 						out_img = dom+out_img
-					response = requests.get(out_img, headers=headers, allow_redirects=True)
-					data = response.content
-					if doTweet : r = twitterapi.request('statuses/update_with_media', {'status':tweet_text}, {'media[]':data})
-					if debug : print("tweet+picture : "+tweet_text)
+					#print(out_img)
+					try :
+						response = requests.get(out_img, headers=headers, allow_redirects=True)
+						data = response.content
+						if doTweet : r = twitterapi.request('statuses/update_with_media', {'status':tweet_text}, {'media[]':data})
+						if debug : print("tweet+picture : "+tweet_text)
+					except :
+						if doTweet : r = twitterapi.request('statuses/update', {'status':tweet_text})
+						if debug : print("tweet (problem with pic): "+tweet_text)
 				else :
 					if doTweet : r = twitterapi.request('statuses/update', {'status':tweet_text})
 					if debug : print("tweet : "+tweet_text)
