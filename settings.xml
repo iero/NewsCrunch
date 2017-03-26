@@ -6,7 +6,7 @@
 		<output>output</output>
 		<pitch>Fil d'info en continu sur le #digital par Gregori Fabre (@fabre_gregori) Digital Advisor Total EP #Innovation #TransfoNum #Greentech #Startup</pitch>
 		<User-Agent>'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'</User-Agent>
-		<feed_rss_file>feed_rss.xml</feed_rss_file>
+		<feed_json_file>feed_json.xml</feed_json_file>
 		<feed_atom_file>feed_atom.xml</feed_atom_file>
 		<feed_name>Veille</feed_name>
 		<feed_url>http://www.iero.org/feed/newscrunch</feed_url>
@@ -28,7 +28,7 @@
 		<twitter_account>@journaldunet</twitter_account>
 		<twitter_mention>#jdn</twitter_mention>
 		<sanitize>
-			<remove type="title">[Info JDN] </remove>
+			<remove type="title">\[.*?\] </remove>
 		</sanitize>
 		<hashtags>
 			<tag>smartcity</tag>
@@ -41,7 +41,7 @@
 		<twitter_account>@journaldunet</twitter_account>
 		<twitter_mention>#jdn</twitter_mention>
 		<sanitize>
-			<remove type="title">[Info JDN] </remove>
+			<remove type="title">\[.*?\] </remove>
 		</sanitize>
 		<hashtags>
 			<tag>iot</tag>
@@ -55,7 +55,7 @@
 		<twitter_account>@journaldunet</twitter_account>
 		<twitter_mention>#jdn</twitter_mention>
 		<sanitize>
-			<remove type="title">[Info JDN] </remove>
+			<remove type="title">\[.*?\] </remove>
 		</sanitize>
 		<hashtags>
 			<tag>rh</tag>
@@ -68,7 +68,7 @@
 		<text type="div" name="class" section="p">entry</text>
 		<image type="p" name="class" section="a" attribute="href">app_entry_lead</image>
 		<sanitize>
-			<remove type="title">[Info JDN] </remove>
+			<remove type="title">\[.*?\] </remove>
 		</sanitize>
 		<hashtags>
 			<tag>cloud</tag>
@@ -81,7 +81,7 @@
 		<text type="div" name="class" section="p">entry</text>
 		<image type="p" name="class" section="a" attribute="href">app_entry_lead</image>
 		<sanitize>
-			<remove type="title">[Info JDN] </remove>
+			<remove type="title">\[.*?\] </remove>
 		</sanitize>
 	</service>
 	<service name="MacGeneration" lang="fr">
@@ -96,6 +96,8 @@
 			<filter type="title">forums</filter>
 			<filter type="title">iconcept</filter>
 			<filter type="title">promo</filter>
+			<filter type="title">partenaire</filter>
+			<filter type="title">livre</filter>
 			<filter type="section" section="h2">Promo</filter>
 		</filters>
 	</service>
@@ -105,6 +107,9 @@
 		<twitter_mention>#siecle #digital</twitter_mention>
 		<text type="div" name="class" section="p">post-content description </text>
 		<image type="div" name="class" section="a" attribute="href">featured</image>
+		<sanitize>
+			<remove type="title">\[One.*?\]</remove>
+		</sanitize>
 	</service>
 	<service name="Sciences et Avenir" lang="fr">
 		<url>https://www.sciencesetavenir.fr/high-tech/rss.xml</url>
@@ -151,12 +156,6 @@
 			<filter type="title">#mcal</filter>
 		</filters>
 		<sanitize>
-			<!--remove type="title">#MaddyFeed : </remove>
-			<remove type="title">#Tribune : </remove>
-			<remove type="title">#MaddyMoney : </remove>
-			<remove type="title">#MaddyFlash : </remove>
-			<remove type="title">#Exclu : </remove>
-			<remove type="title">#Étude</remove-->
 			<remove type="title">#.*?:</remove>
 		</sanitize>
 	</service>
@@ -178,7 +177,14 @@
 		<image type="div" name="class" section="img" attribute="data-lazy-original">entry-content</image>
 		<filters>
 			<filter type="title">offres d'emploi</filter>
+			<filter type="title">5 évenements</filter>
+			<filter type="title">L'agenda de</filter>
+			<filter type="title">top 5</filter>
 		</filters>
+		<sanitize>
+			<remove type="title"> \(.*?\)</remove>
+			<remove type="title">Interview : </remove>
+		</sanitize>
 	</service>
 	<service name="Les echos #hightech" lang="fr">
 		<url type="html">https://www.lesechos.fr/tech-medias/hightech/index.php</url>
@@ -209,7 +215,7 @@
 			<filter type="title">ne fallait pas manquer</filter>
 		</filters>
 		<sanitize>
-			<remove type="title">[FW Radar] </remove>
+			<remove type="title">\[.*?\] </remove>
 		</sanitize>
 	</service>
 

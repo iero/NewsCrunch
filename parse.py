@@ -1,6 +1,7 @@
 import os
 import socket
 import re
+import json
 
 import urllib3
 import requests
@@ -19,6 +20,8 @@ from pyshorteners import Shortener
 
 #import elastic.export_to_es as es
 
+# Utils
+
 def parseURLName(url) :
 	entry_parsed = urlparse(post.link)
 	entry_domain = '{uri.scheme}://{uri.netloc}/'.format(uri=entry_parsed)
@@ -33,10 +36,10 @@ def sanitizeText(text) :
 	else :
 		return text
 
-#--
+# Debug
+
 debug = False
 doTweet = True
-
 # debug on local
 if "digital-gf.local" in socket.gethostname() :
 	print("Local testing...")
@@ -71,6 +74,11 @@ out_directory = root.find('settings').find('output').text
 if not os.path.exists(out_directory): os.makedirs(out_directory)
 if not os.path.exists(out_directory+'/fr'): os.makedirs(out_directory+'/fr')
 if not os.path.exists(out_directory+'/en'): os.makedirs(out_directory+'/en')
+
+# Create JSON feed if needed
+feed_json_file=root.find('settings').find('feed_json_file').text
+json_data = {}
+json_data['key'] = 'value'
 
 # Create RSS feed if needed
 feed_atom_file=root.find('settings').find('feed_atom_file').text
@@ -287,5 +295,8 @@ for service in root.findall('service'):
 				#fg.rss_file(feed_rss_file) # Write the RSS feed to a file
 				fg.atom_file(feed_atom_file) # Write the RSS feed to a file
 
-
 			print(" "+entry+" created")
+
+# Write json
+#with open(feed_json_file, 'w') as jsonfile:
+#    json.dump(data, jsonfile)
