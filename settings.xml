@@ -124,6 +124,7 @@
 		<twitter_mention>#itespresso</twitter_mention>
 		<text type="div" name="class" section="p">article-content</text>
 		<image type="div" name="class" section="img" attribute="src">imageTitleWrapper</image>
+		<tags type="div" section="a">entry-breadcrumb</tags>
 	</service>
 	<service name="Korben" lang="fr">
 		<url>http://korben.info/feed</url>
@@ -168,6 +169,9 @@
 		<filters>
 			<filter type="title">quoi de neuf</filter>
 		</filters>
+		<sanitize>
+			<remove type="title"> \[.*?\]</remove>
+		</sanitize>
 	</service>
 	<service name="Blog du Moderateur" lang="fr">
 		<url>http://feeds.feedburner.com/captainjob</url>
@@ -176,7 +180,7 @@
 		<text type="div" name="class" section="p">entry-content</text>
 		<image type="div" name="class" section="img" attribute="data-lazy-original">entry-content</image>
 		<filters>
-			<filter type="title">offres d'emploi</filter>
+			<filter type="title">offres</filter>
 			<filter type="title">5 évenements</filter>
 			<filter type="title">L'agenda de</filter>
 			<filter type="title">top 5</filter>
@@ -207,6 +211,8 @@
 		<!-- add tag support -->
 		<tags type="div" section="a">categories</tags>
 		<filters>
+			<filter type="class" name="subtitle" section="h2">partenariat</filter>
+			<filter type="title">offres</filter>
 			<filter type="title">sen#7</filter>
 			<filter type="title">[insiders]</filter>
 			<filter type="title">[emploi]</filter>
@@ -219,6 +225,14 @@
 		</sanitize>
 	</service>
 
+	<service name="Fred Cavazza" lang="fr">
+		<url type="rss">https://fredcavazza.net/feed/</url>
+		<twitter_account>@fredcavazza</twitter_account>
+		<twitter_mention>#fcavazza</twitter_mention>
+		<text type="div" name="class" section="p">entry-content</text>
+		<image type="div" name="class" section="img" attribute="src">entry-content</image>
+		<tags type="span" section="a">tags-links</tags>
+	</service>
 
 	<!--service name="Piwee" lang="fr">
 			<url>http://piwee.net/feed/</url>

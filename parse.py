@@ -98,7 +98,7 @@ fg.atom_file(feed_atom_file) # Write the ATOM feed to a file
 
 # Parse rss services and apply
 for service in root.findall('service'):
-	rss_name = service.get('name')
+	service_name = service.get('name')
 	rss_url = service.find('url').text
 	rss_twitter = ""
 	if service.find('twitter_mention') is not None :
@@ -110,8 +110,7 @@ for service in root.findall('service'):
 	rss_lang = service.get('lang')
 	rss_dir = '{uri.netloc}'.format(uri=rss_parsed)
 	rss_dir = out_directory + '/' + rss_lang +'/'+ rss_dir
-
-	print("+ RSS : "+rss_name)
+	print("+ RSS : "+service_name)
 
 	if not os.path.exists(rss_dir):
 		print("+- New feed "+rss_dir+" created")
@@ -122,15 +121,13 @@ for service in root.findall('service'):
 
 	for post in feed.entries:
 
-		# Get pages from selected category
 		filtered_post = False
-		#if service.find('selection') is not None :
-		#	filtered_post = True
-		#	for sel in service.find('selection').findall("select") :
-		#		sel_type = sel.get('type')
-		#		sel_value = sel.text
-		#		if (sel_type == "url") and (sel_value in post.link) :
-		#			filtered_post = False
+
+		# Grab service tags
+		post_tags= []
+		if service.find('hashtags') is not None :
+			for t in service.find('hashtags').findall("tag") :
+				post_tags.append(t.text)
 
 		link = post.link.rsplit('?', 1)[0]
 		link = link.rsplit('#', 1)[0]
@@ -149,7 +146,7 @@ for service in root.findall('service'):
 				web_page = requests.get(link, headers=headers)
 
 			# Parse page
-			if debug : print("+-> " + web_page.url)
+			#if debug : print("+-> " + web_page.url)
 			soup = BeautifulSoup(web_page.content, "html.parser")
 
 			# Get pages from selected category
@@ -179,15 +176,25 @@ for service in root.findall('service'):
 						post_title = re.sub(removedField.text,'',post_title)
 						#post_title = post_title.replace(removedField.text,"")
 
-			# Remove ad post.. based on title
+			# Remove ad post..
 			if service.find('filters') is not None :
 				for filter in service.find('filters').findall("filter") :
 					filter_type = filter.get('type')
 					filter_value = filter.text
 					#print("test "+filter_value+" in "+post_title.lower())
+					# based on title
 					if filter_type == "title" and filter_value in post_title.lower() :
-						print("Title filter matched on "+filter_value)
+						print("+--x Title filter matched on "+filter_value)
 						filtered_post = True
+					# based on content
+					if filter_type == "class" :
+						filter_name = filter.get('name')
+						filter_section = filter.get('section')
+						#print(filter_name)
+						f=soup.find(filter_section, class_=filter_name)
+						if f is not None and filter_value in f.get_text().lower() :
+							print("+--x Content filter matched on "+filter_value)
+							filtered_post = True
 
 			# Grab text
 			rss_text_type = service.find('text').get('type')
@@ -207,6 +214,24 @@ for service in root.findall('service'):
 			file.write(out_text.encode('utf-8'))
 			file.close()
 
+			# Grab tags
+			if service.find('tags') is not None :
+				tags_type = service.find('tags').get('type')
+				tags_section = service.find('tags').get('section')
+				tags_value = service.find('tags').text
+				tags_sec=soup.find(tags_type, class_=tags_value)
+				if tags_sec is not None and tags_sec.find_all(tags_section) is not None :
+					for t in tags_sec.find_all(tags_section):
+						tag = t.get_text()
+						if " " not in tag : post_tags.append(tag)
+					if post_tags and debug :
+						print("+--> Tags : "+str(post_tags))
+					# Replace words by tags in title
+					tweet_size_allowed = tweet_size - tweet_link_size
+					for t in post_tags :
+						if t in post_title and len(post_title)+len(t) < tweet_size_allowed :
+							post_title = re.sub(t,"#"+t,post_title)
+
 			# Grab main image
 			rss_img_type = service.find('image').get('type')
 			rss_img_name = service.find('image').get('name')
@@ -219,7 +244,7 @@ for service in root.findall('service'):
 			#print(img_sec)
 			if img_sec is not None and img_sec.find(rss_img_section) is not None :
 				out_img=img_sec.find(rss_img_section).get(rss_img_attribute)
-				if debug : print(out_img)
+				if debug : print("+--> Image : "+ out_img)
 
 				#for element in img_sec.findAll(rss_img_section):
 				#	out_img=element.get(rss_img_attribute)
@@ -251,10 +276,14 @@ for service in root.findall('service'):
 				except :
 					tweet_text = tweet_text+" "+web_page.url
 
+				# Add tags if possible
+				for t in post_tags :
+					if t not in post_title and len(post_title)+len(t)+2 <= tweet_size_allowed :
+						tweet_text = tweet_text+" #"+t
+
 				# Add source if possible
 				if (len(tweet_text) + len(rss_twitter) < tweet_size_allowed) :
 						tweet_text = tweet_text+" "+rss_twitter
-				# Add tags
 
 				# Add Image & push tweet
 				if out_img :
@@ -279,7 +308,7 @@ for service in root.findall('service'):
 					if debug : print("tweet : "+tweet_text)
 
 				# Add to index
-				#es.export_to_es_from_text(out_text,rss_name,post_title)
+				#es.export_to_es_from_text(out_text,service_name,post_title)
 
 				# Add to rss
 				if out_img is not None or not out_img:
@@ -287,7 +316,7 @@ for service in root.findall('service'):
 				fe = fg.add_entry()
 				fe.id(entry)
 				fe.title(post_title)
-				fe.author(name=rss_name)
+				fe.author(name=service_name)
 				#fe.updated(post.updated)
 				fe.link(href=post.link)
 				fe.content(src=out_text, type="raw")
