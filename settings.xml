@@ -6,7 +6,7 @@
 		<output>output</output>
 		<pitch>Fil d'info en continu sur le #digital par Gregori Fabre (@fabre_gregori) Digital Advisor Total EP #Innovation #TransfoNum #Greentech #Startup</pitch>
 		<User-Agent>'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'</User-Agent>
-		<feed_json_file>feed_json.xml</feed_json_file>
+		<feed_json_file>feed</feed_json_file>
 		<feed_atom_file>feed_atom.xml</feed_atom_file>
 		<feed_name>Veille</feed_name>
 		<feed_url>http://www.iero.org/feed/newscrunch</feed_url>
@@ -20,7 +20,11 @@
 		<image type="div" name="class" section="img" attribute="src">post-content description</image>
 		<twitter_account>@pressecitron</twitter_account>
 		<twitter_mention>#pcitron</twitter_mention>
+		<sanitize>
+			<remove type="title">\[.*?\] </remove>
+		</sanitize>
 	</service>
+
 	<service name="Journal du Net #smartcities" lang="fr">
 		<url>http://www.journaldunet.com/smart-city/rss/</url>
 		<text type="div" name="class" section="p">entry</text>
@@ -104,7 +108,7 @@
 	<service name="Siecle Digital" lang="fr">
 		<url>https://siecledigital.fr/feed/</url>
 		<twitter_account>@siecledigital</twitter_account>
-		<twitter_mention>#siecle #digital</twitter_mention>
+		<twitter_mention>#digital</twitter_mention>
 		<text type="div" name="class" section="p">post-content description </text>
 		<image type="div" name="class" section="a" attribute="href">featured</image>
 		<sanitize>
@@ -116,7 +120,7 @@
 		<twitter_account>@science_avenir</twitter_account>
 		<twitter_mention>#science</twitter_mention>
 		<text type="div" name="class" section="p">corps article-sea-home-a article-sea-hightech-a</text>
-		<image type="div" name="class" section="img" attribute="src">in</image>
+		<image type="div" name="class" section="img" attribute="src">article-image</image>
 	</service>
 	<service name="Itespresso" lang="fr">
 		<url>http://www.itespresso.fr/feed</url>
@@ -171,6 +175,7 @@
 		</filters>
 		<sanitize>
 			<remove type="title"> \[.*?\]</remove>
+			<remove type="title">\[.*?\]</remove>
 		</sanitize>
 	</service>
 	<service name="Blog du Moderateur" lang="fr">
@@ -232,6 +237,17 @@
 		<text type="div" name="class" section="p">entry-content</text>
 		<image type="div" name="class" section="img" attribute="src">entry-content</image>
 		<tags type="span" section="a">tags-links</tags>
+	</service>
+
+	<service name="Petit web" lang="fr">
+		<url type="rss">http://www.petitweb.fr/feed/</url>
+		<twitter_account>@petitweb</twitter_account>
+		<twitter_mention>#petitweb</twitter_mention>
+		<text type="div" name="class" section="p">entry-content</text>
+		<image type="div" name="class" section="img" attribute="data-lazy-src">thumbnail single-post-thumbnail section</image>
+		<!--filters>
+			<filter type="title">revue de web</filter>
+		</filters-->
 	</service>
 
 	<!--service name="Piwee" lang="fr">

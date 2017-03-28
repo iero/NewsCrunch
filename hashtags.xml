@@ -1,14 +1,35 @@
 <?xml version="1.0"?>
 <data>
+
+<!-- Next step : use elastic to figure out words -->
+
+  <!-- Emphasize words -->
   <hashtags>
+    <!-- Apple -->
+    <tag>cupertino</tag>
     <tag>apple</tag>
+    <tag>iOS</tag>
+    <tag>macOS</tag>
+    <tag>watchOS</tag>
+
+    <!-- GAFA -->
+    <tag>amazon</tag>
+    <tag>uber</tag>
+    <tag>airbnb</tag>
+    <tag>facebook</tag>
+
     <tag>iot</tag>
+
     <tag>nomad</tag>
     <tag>startup</tag>
   </hashtags>
+
+  <!-- Simplify words found -->
   <simplify>
     <tag value="sf">san francisco</tag>
     <tag value="bugbounty">bug bounty</tag>
     <tag value="frenchtech">french tech</tag>
+    <tag value="startup">start-up</tag>
+    <tag value="stationF">Station F</tag>
   </simplify>
 </data>

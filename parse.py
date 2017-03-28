@@ -78,7 +78,6 @@ if not os.path.exists(out_directory+'/en'): os.makedirs(out_directory+'/en')
 # Create JSON feed if needed
 feed_json_file=root.find('settings').find('feed_json_file').text
 json_data = {}
-json_data['key'] = 'value'
 
 # Create RSS feed if needed
 feed_atom_file=root.find('settings').find('feed_atom_file').text
@@ -222,7 +221,7 @@ for service in root.findall('service'):
 				tags_sec=soup.find(tags_type, class_=tags_value)
 				if tags_sec is not None and tags_sec.find_all(tags_section) is not None :
 					for t in tags_sec.find_all(tags_section):
-						tag = t.get_text()
+						tag = t.get_text().lower()
 						if " " not in tag : post_tags.append(tag)
 					if post_tags and debug :
 						print("+--> Tags : "+str(post_tags))
@@ -310,6 +309,16 @@ for service in root.findall('service'):
 				# Add to index
 				#es.export_to_es_from_text(out_text,service_name,post_title)
 
+				# Add to json
+				json_data[post_title] = []
+				json_data[post_title].append({
+					'service': service_name,
+					'date' : post.updated,
+    				'source': post.link,
+					'image': out_img,
+					'text' : out_text
+				})
+
 				# Add to rss
 				if out_img is not None or not out_img:
 					out_text="<img src=\""+out_img+"\"/><p>"+out_text+"</p>"
@@ -326,6 +335,6 @@ for service in root.findall('service'):
 
 			print(" "+entry+" created")
 
-# Write json
-#with open(feed_json_file, 'w') as jsonfile:
-#    json.dump(data, jsonfile)
+#Write json
+with open(feed_json_file, 'w') as jsonfile:
+    json.dump(json_data, jsonfile)
