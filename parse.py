@@ -1,6 +1,7 @@
 import os
 import socket
 import re
+import time
 import json
 
 import urllib3
@@ -21,6 +22,7 @@ from pyshorteners import Shortener
 #import elastic.export_to_es as es
 
 # Utils
+current_milli_time = lambda: int(round(time.time() * 1000))
 
 def parseURLName(url) :
 	entry_parsed = urlparse(post.link)
@@ -43,8 +45,8 @@ doTweet = True
 # debug on local
 if "digital-gf.local" in socket.gethostname() :
 	print("Local testing...")
-	debug= True
-	doTweet=False
+	debug = True
+	doTweet = False
 
 # Tweet sizes = add 1 for extra space
 tweet_size = 140
@@ -75,11 +77,14 @@ if not os.path.exists(out_directory): os.makedirs(out_directory)
 if not os.path.exists(out_directory+'/fr'): os.makedirs(out_directory+'/fr')
 if not os.path.exists(out_directory+'/en'): os.makedirs(out_directory+'/en')
 
-# Create JSON feed if needed
+# Create JSON feed
 feed_json_file=root.find('settings').find('feed_json_file').text
 json_data = {}
+with open(feed_json_file) as json_file:
+	json_data = json.load(json_file)
+	if debug : print("+ JSON size : "+str(len(json_data)))
 
-# Create RSS feed if needed
+# Create RSS feed
 feed_atom_file=root.find('settings').find('feed_atom_file').text
 feed_url=root.find('settings').find('feed_url').text
 
@@ -306,35 +311,40 @@ for service in root.findall('service'):
 					if doTweet : r = twitterapi.request('statuses/update', {'status':tweet_text})
 					if debug : print("tweet : "+tweet_text)
 
-				# Add to index
-				#es.export_to_es_from_text(out_text,service_name,post_title)
-
 				# Add to json
-				json_data[post_title] = []
-				json_data[post_title].append({
+				post_id = str(current_milli_time())
+				json_data[post_id] = []
+				json_data[post_id].append({
 					'service': service_name,
+					'title': post_title,
 					'date' : post.updated,
+					'lang' : rss_lang,
     				'source': post.link,
 					'image': out_img,
+					'tags' : post_tags,
 					'text' : out_text
 				})
-
-				# Add to rss
-				if out_img is not None or not out_img:
-					out_text="<img src=\""+out_img+"\"/><p>"+out_text+"</p>"
-				fe = fg.add_entry()
-				fe.id(entry)
-				fe.title(post_title)
-				fe.author(name=service_name)
-				#fe.updated(post.updated)
-				fe.link(href=post.link)
-				fe.content(src=out_text, type="raw")
-				#fe.summary(src=out_text, type="raw")
-				#fg.rss_file(feed_rss_file) # Write the RSS feed to a file
-				fg.atom_file(feed_atom_file) # Write the RSS feed to a file
 
 			print(" "+entry+" created")
 
 #Write json
 with open(feed_json_file, 'w') as jsonfile:
     json.dump(json_data, jsonfile)
+
+#Write associated RSS feed
+#for p in data['people']:
+for news in json_data :
+	for t in json_data[news] :
+		fe = fg.add_entry()
+		fe.id(news)
+		fe.title(t['title'])
+		fe.author(name=t['service'])
+		#fe.updated(t['date'])
+		fe.link(href=t['source'])
+
+		if t['image'] is not None :
+			out_text="<img src=\""+t['image']+"\"/><p>"+t['text']+"</p>"
+		else :
+			out_text="<p>"+t['text']+"</p>"
+		fe.content(src=out_text, type="raw")
+fg.atom_file(feed_atom_file) # Write the RSS feed to a file

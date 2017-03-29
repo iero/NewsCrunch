@@ -250,6 +250,19 @@
 		</filters-->
 	</service>
 
+	<service name="Motherboard Vice" lang="fr">
+		<url type="rss">https://motherboard.vice.com/fr/rss</url>
+		<twitter_account>@motherboard</twitter_account>
+		<twitter_mention>#mboard</twitter_mention>
+		<text type="div" name="class" section="p">article__body</text>
+		<image type="div" name="class" section="img" attribute="src">short-form-article__body__content</image>
+		<!--filters>
+			<filter type="title">revue de web</filter>
+		</filters-->
+	</service>
+
+
+
 	<!--service name="Piwee" lang="fr">
 			<url>http://piwee.net/feed/</url>
 			<twitter_account>@piweeFR</twitter_account>
