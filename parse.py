@@ -44,8 +44,9 @@ def sanitizeText(text) :
 # Debug
 
 debug = False
-doTweet = False
+doTweet = True
 # debug on local
+print("Running on "+socket.gethostname())
 if "digital-gf.local" in socket.gethostname() :
 	print("Local testing...")
 	debug = True
@@ -281,6 +282,9 @@ for service in root.findall('service'):
 				token_dict.append(post_title)
 				sim_results = similarity.find_similar(token_dict)
 				print(sim_results)
+				sim_grade=float("{0:.2f}".format(sim_results[0][1]))
+				if sim_results[0][1] == 0 : sim_desc=""
+				else : sim_desc = sim_results[0][2]
 				#print("%.2f".format(sim_results[0][1]))
 
 				# Twitter
@@ -345,8 +349,8 @@ for service in root.findall('service'):
     				'source': post.link,
 					'image': out_img,
 					'tags' : post_tags,
-					'similarity' : sim_results[0][1],
-					'similarity_with' : sim_results[0][2],
+					'similarity' : sim_grade,
+					'similarity_with' : sim_desc,
 					'text' : out_text
 				})
 
