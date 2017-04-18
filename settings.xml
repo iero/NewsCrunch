@@ -1,9 +1,12 @@
 <?xml version="1.0"?>
 <data>
 
+
+
 	<settings>
 		<author>Gregori Fabre</author>
-		<output>/Users/greg/Downloads/output</output>
+		<output>output</output>
+		<localoutput>/Users/greg/Downloads/output</localoutput>
 		<pitch>Fil d'info en continu sur le #digital par Gregori Fabre (@fabre_gregori) Digital Advisor Total EP #Innovation #TransfoNum #Greentech #Startup</pitch>
 		<User-Agent>'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'</User-Agent>
 		<feed_json_file>feed</feed_json_file>
@@ -105,6 +108,7 @@
 			<filter type="section" section="h2">Promo</filter>
 		</filters>
 	</service>
+
 	<service name="Siecle Digital" lang="fr">
 		<url>https://siecledigital.fr/feed/</url>
 		<twitter_account>@siecledigital</twitter_account>
@@ -115,6 +119,7 @@
 			<remove type="title">\[One.*?\]</remove>
 		</sanitize>
 	</service>
+
 	<service name="Sciences et Avenir" lang="fr">
 		<url>https://www.sciencesetavenir.fr/high-tech/rss.xml</url>
 		<twitter_account>@science_avenir</twitter_account>
@@ -122,14 +127,16 @@
 		<text type="div" name="class" section="p">corps article-sea-home-a article-sea-hightech-a</text>
 		<image type="div" name="class" section="img" attribute="src">article-image</image>
 	</service>
+
 	<service name="Itespresso" lang="fr">
 		<url>http://www.itespresso.fr/feed</url>
 		<twitter_account>@itespressofr</twitter_account>
 		<twitter_mention>#itespresso</twitter_mention>
-		<text type="div" name="class" section="p">article-content</text>
+		<text type="div" name="class" section="p">entry-excerpt</text>
 		<image type="div" name="class" section="img" attribute="src">imageTitleWrapper</image>
 		<tags type="div" section="a">entry-breadcrumb</tags>
 	</service>
+
 	<service name="Korben" lang="fr">
 		<url>http://korben.info/feed</url>
 		<twitter_account>@korben</twitter_account>
@@ -137,6 +144,7 @@
 		<text type="div" name="class" section="p">post-content</text>
 		<image type="div" name="class" section="img" attribute="src">post-thumbnail</image>
 	</service>
+
 	<service name="Nouvel Obs" lang="fr">
 		<url>http://o.nouvelobs.com/high-tech/rss.xml</url>
 		<twitter_account>@lobs</twitter_account>
@@ -144,6 +152,7 @@
 		<text type="div" name="class" section="p">o-article-body</text>
 		<image type="div" name="class" section="img" attribute="src">o-article-body</image>
 	</service>
+
 	<service name="Les echos business" lang="fr">
 		<url>https://business.lesechos.fr/rss/dn.xml</url>
 		<twitter_account>@EchosBusiness</twitter_account>

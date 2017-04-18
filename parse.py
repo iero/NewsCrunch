@@ -34,43 +34,35 @@ def parseURLName(url) :
 	entry = entry+".txt"
 	return entry
 
-def sanitizeText(text) :
-	filtered_words=["adsbygoogle","toto"]
-	if any(x in text for x in filtered_words):
-		return ""
-	else :
-		return text
+# Tweet sizes = add 1 for extra space
+tweet_size = 140
+tweet_link_size = 1+23
 
-# Debug
+# Load Services & security Settings
+general_settings = utils.loadxml("settings.xml")
+auth_settings = utils.loadxml("auth.xml")
 
-debug = False
-doTweet = True
+print(datetime.now())
+
+for service in auth_settings.findall('service') :
+    if service.get("name") == "bitly" :
+        shortener = Shortener('Bitly', bitly_token=service.find("token").text)
+    elif service.get("name") == "twitter" :
+        twitterapi = TwitterAPI(consumer_key=service.find("consumer_key").text, consumer_secret=service.find("consumer_secret").text, access_token_key=service.find("access_token_key").text, access_token_secret=service.find("access_token_secret").text)
+
+headers = {'User-Agent': general_settings.find('settings').find('User-Agent').text}
+
 # debug on local
 print("Running on "+socket.gethostname())
 if "digital-gf.local" in socket.gethostname() :
 	print("Local testing...")
 	debug = True
 	doTweet = False
-
-# Tweet sizes = add 1 for extra space
-tweet_size = 140
-tweet_link_size = 1+23
-
-# Load Services Settings
-root = utils.loadxml("settings.xml")
-# Load security settings
-auth_root = utils.loadxml("auth.xml")
-
-print(datetime.now())
-
-for service in auth_root.findall('service') :
-    if service.get("name") == "bitly" :
-        shortener = Shortener('Bitly', bitly_token=service.find("token").text)
-    elif service.get("name") == "twitter" :
-        twitterapi = TwitterAPI(consumer_key=service.find("consumer_key").text, consumer_secret=service.find("consumer_secret").text, access_token_key=service.find("access_token_key").text, access_token_secret=service.find("access_token_secret").text)
-
-headers = {'User-Agent': root.find('settings').find('User-Agent').text}
-out_directory = root.find('settings').find('output').text
+	out_directory = general_settings.find('settings').find('localoutput').text
+else :
+	debug = False
+	doTweet = True
+	out_directory = general_settings.find('settings').find('output').text
 
 # Create directory structure
 if not os.path.exists(out_directory): os.makedirs(out_directory)
@@ -78,7 +70,7 @@ if not os.path.exists(out_directory+'/fr'): os.makedirs(out_directory+'/fr')
 if not os.path.exists(out_directory+'/en'): os.makedirs(out_directory+'/en')
 
 # Create JSON feed
-feed_json_file=root.find('settings').find('feed_json_file').text
+feed_json_file=general_settings.find('settings').find('feed_json_file').text
 json_data = utils.loadjson(feed_json_file)
 
 # Keep last hundred messages
@@ -88,17 +80,19 @@ while len(json_data) > 100 :
 	if debug : print("Removed "+m)
 	del json_data[m]
 
-# create dictionnary for similarity
-token_dict = []
+# create dictionnaries for similarity
+title_dict = []
+text_dict = []
 for news in json_data :
 	for t in json_data[news] :
-		token_dict.append(t['title'])
+		title_dict.append(t['title'])
+		text_dict.append(t['text'])
 
 if debug : print("+ JSON size : "+str(len(json_data)))
 
 # Create RSS feed
-feed_atom_file=root.find('settings').find('feed_atom_file').text
-feed_url=root.find('settings').find('feed_url').text
+feed_atom_file=general_settings.find('settings').find('feed_atom_file').text
+feed_url=general_settings.find('settings').find('feed_url').text
 
 fg = FeedGenerator()
 fg.id(feed_url) #TODO : mettre numero unique
@@ -113,7 +107,7 @@ atomfeed = fg.atom_str(pretty=True) # Get the ATOM feed as string
 fg.atom_file(feed_atom_file) # Write the ATOM feed to a file
 
 # Parse rss services and apply
-for service in root.findall('service'):
+for service in general_settings.findall('service'):
 	service_name = service.get('name')
 	rss_url = service.find('url').text
 	rss_twitter = ""
@@ -217,14 +211,8 @@ for service in root.findall('service'):
 			rss_text_name = service.find('text').get('name')
 			rss_text_value = service.find('text').text
 			rss_text_section = service.find('text').get('section')
-			out_text=""
-			text_sec=soup.find(rss_text_type, class_=rss_text_value)
-			if text_sec is not None :
-				for t in text_sec.find_all(rss_text_section):
-					out_text=out_text+sanitizeText(t.get_text())
 
-			# sanitize
-			out_text=out_text.replace(r'\r','')
+			out_text= utils.extractTextFromPage(soup,rss_text_type,rss_text_name,rss_text_value,rss_text_section)
 
 			file = open(rss_dir+'/'+entry, 'wb')
 			file.write(out_text.encode('utf-8'))
@@ -255,19 +243,9 @@ for service in root.findall('service'):
 			rss_img_section = service.find('image').get('section')
 			rss_img_attribute = service.find('image').get('attribute')
 
-			out_img=""
-			img_sec=soup.find(rss_img_type, class_=rss_img_value)
-			#print(img_sec)
-			if img_sec is not None and img_sec.find(rss_img_section) is not None :
-				out_img=img_sec.find(rss_img_section).get(rss_img_attribute)
-				if debug : print("+--> Image : "+ out_img)
+			out_img= utils.extractImageFromPage(soup,rss_img_type,rss_img_name,rss_img_value,rss_img_section,rss_img_attribute)
 
-				#for element in img_sec.findAll(rss_img_section):
-				#	out_img=element.get(rss_img_attribute)
-				#	if debug : print(out_img)
-
-			#print(news_process.summary(out_text,35))
-			#Filters title ?
+			#Filters title
 			if service.find('filters') is not None :
 				for filter in service.find('filters').findall("filter") :
 					filter_type = filter.get('type')
@@ -277,16 +255,23 @@ for service in root.findall('service'):
 						print("Content filter matched on "+filter_value)
 						filtered_post = True
 
-			if not filtered_post :
-				# Test similarity
-				token_dict.append(post_title)
-				sim_results = similarity.find_similar(token_dict)
-				print(sim_results)
-				sim_grade=float("{0:.2f}".format(sim_results[0][1]))
-				if sim_results[0][1] == 0 : sim_desc=""
-				else : sim_desc = sim_results[0][2]
-				#print("%.2f".format(sim_results[0][1]))
+			# Test similarity
+			title_dict.append(post_title)
+			sim_results = similarity.find_similar(title_dict)
+			#print(sim_results)
+			sim_grade=float("{0:.2f}".format(sim_results[0][1]))
+			if sim_results[0][1] == 0 : sim_desc=""
+			else : sim_desc = sim_results[0][2]
+			#print("%.2f".format(sim_results[0][1]))
+			if (sim_grade > 0.5) :
+				print("Duplicate with ["+sim_desc+"] Score : "+str(sim_grade))
+				filtered_post = True
 
+			text_dict.append(out_text)
+			sim_text_results = similarity.find_similar(text_dict)
+			sim_text_grade=float("{0:.2f}".format(sim_text_results[0][1]))
+
+			if not filtered_post :
 				# Twitter
 				tweet_text = post_title
 				tweet_size_allowed = tweet_size - tweet_link_size
@@ -351,7 +336,9 @@ for service in root.findall('service'):
 					'tags' : post_tags,
 					'similarity' : sim_grade,
 					'similarity_with' : sim_desc,
-					'text' : out_text
+					'similiarity_content' : sim_text_grade,
+					'text' : out_text,
+					'text_size' : str(len(out_text.split()))
 				})
 
 			print(" "+entry+" created")
@@ -364,7 +351,7 @@ with open(feed_json_file, 'w') as jsonfile:
 #Write associated RSS feed
 #for p in data['people']:
 for news in json_data :
-	for t in json_data[news] :
+	for t in reversed(json_data[news]) :
 		fe = fg.add_entry()
 		fe.id(news)
 		fe.title(t['title'])
