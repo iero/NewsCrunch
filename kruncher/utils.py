@@ -61,5 +61,5 @@ def extractFormatedTextFromPage(soup,type,name,value,section) :
 def findArticlefromText(json_data,text) :
     for news in json_data :
     	for t in json_data[news] :
-            if text is in t['raw'] :
+            if text in t['raw'] :
                 return t['title']
