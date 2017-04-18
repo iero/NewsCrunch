@@ -1,4 +1,4 @@
-#2017/03/23 David Campion
+#017/03/23 David Campion
 
 #usage:
 # import this library in your code:
@@ -36,10 +36,10 @@ from nltk.tokenize import TreebankWordTokenizer #import the Treebank tokenizer
 from nltk.tokenize import WordPunctTokenizer
 
 #import lib to detect language
-import detect_lang
+import elastic.detect_lang
 
 #number of news in the dictionary
-NB_NEWS = 9
+#NB_NEWS = 9
 
 #name stemmers
 stemmer_fr=FrenchStemmer()
@@ -115,7 +115,7 @@ def stem_tokens(tokens, stemmer):
 #tokenize a  text depending on its language
 def tokenize(text):
     #check language
-    language = detect_lang.get_language(text)
+    language = elastic.detect_lang.get_language(text)
     if language == 'french':
         #tokenize text
         tokens = tokenizer.tokenize(text)
@@ -124,7 +124,6 @@ def tokenize(text):
         stems = stem_tokens(tokens, stemmer_fr)
         #uncomment to print tokens and stem words
         #print("tokens: ", tokens)
-        #print("stems: ", stems)
     elif language == 'english':
         #tokenize text
         tokens = tokenizer.tokenize(text)
@@ -133,7 +132,6 @@ def tokenize(text):
         stems = stem_tokens(tokens, stemmer_en)
         #uncomment to print tokens and stem words
         #print("tokens: ", tokens)
-        #print("stems: ", stems)
     else:
         #tokenize text
         tokens = tokenizer.tokenize(text)
@@ -142,9 +140,9 @@ def tokenize(text):
         stems = stem_tokens(tokens, stemmer_en)
         #uncomment to print tokens and stem words
         #print("tokens: ", tokens)
-        #print("stems: ", stems)
-    return stems
 
+    #print("stems: ", stems)
+    return stems
 
 #------
 #clean text: remove punctuation and get lower characters
@@ -156,63 +154,80 @@ def clean_text(text):
     cleaned = lowers
     return cleaned
 
-#-------
-#-------
-#initiate dictionnary
-def initiate_dict(token_dict):
-    #number fof news in the dict.
-    count = NB_NEWS
-    #iterate a push news with the new entry
-    while (count >= 0):
-        token_dict["news_" + str(count)] = ""
-        count = count - 1
-    #uncomment to display the dict
-    #print(token_dict)
-
-
-#------
-#------
-#add news to the dictionnary
-def add_news_to_dict(token_dict,text):
-    #number of news in the dict.
-    count = NB_NEWS
-    #iterate a push news with the new entry
-    while (count > 0):
-        token_dict["news_" + str(count)] = token_dict["news_" + str(count-1)]
-        count = count - 1
-    token_dict["news_0"] = clean_text(text)
-
-
-#------
-#------
 #find similar doc for the last news. Parameters:
 # - token_dict: a dictionnary of tokens,
-# -  tfidf_matrix: the tfid matrix of documents
 # -  top_n = n most similar documents to retrieve
 
-def find_similar(token_dict, index, top_n = 1): #tfidf_matrix,
+def get_similarity(token_dict, top_n = 1) :
+        if len(token_dict) == 1 : return [0,1,token_dict[0]]
 
+        # Reverse list to put the seed in first position
+        reverse_dict=[]
+        for n in range(0,len(token_dict)) :
+            reverse_dict.append(token_dict[len(token_dict)-n-1])
+
+        index = len(token_dict)-1
+
+        tfidf = TfidfVectorizer(tokenizer=tokenize, stop_words=stopwords_all)
+        tfidf_matrix = tfidf.fit_transform(reverse_dict)
+        cosine_similarities = linear_kernel(tfidf_matrix[0:1], tfidf_matrix).flatten()
+        related_docs_indices = [i for i in cosine_similarities.argsort()[::-1] if i != 0]
+
+        return cosine_similarities[0]
+
+def find_similar(token_dict, top_n = 1): #tfidf_matrix,
+
+    # Only one item
+    if len(token_dict) == 1 : return [0,1,token_dict[0]]
+
+    # Reverse list to put the seed in first position
+    reverse_dict=[]
+    for n in range(0,len(token_dict)) :
+        #print("Swap {} with {}".format(n,len(token_dict)-n-1))
+        reverse_dict.append(token_dict[len(token_dict)-n-1])
+
+    index = len(token_dict)-1
+
+    # print("Looking for [{}] in : ".format(reverse_dict[0]))
+    # i=0
+    # for token in reverse_dict :
+    #     #print("  {} : {}".format(token, token_dict[token]))
+    #     print("  {} : {}".format(i,token))
+    #     i=i+1
+
+    # print(index)
     #create model
-    #tfidf = TfidfVectorizer(tokenizer=tokenize, stop_words='english')
-    tfidf = TfidfVectorizer(tokenizer=tokenize, stop_words=stopwords_all)
-    tfidf_matrix = tfidf.fit_transform(token_dict.values())
+    # -  tfidf_matrix: the tfid matrix of documents
 
+    tfidf = TfidfVectorizer(tokenizer=tokenize, stop_words=stopwords_all)
+    #tfidf_matrix = tfidf.fit_transform(token_dict.values())
+    tfidf_matrix = tfidf.fit_transform(reverse_dict)
 
     #uncomment below to view tfidf of other features
-    print("tfidf matrix: " , tfidf_matrix)
-    response = tfidf.transform([list(token_dict.values())[index]])
-    print(response)
-    feature_names = tfidf.get_feature_names()
-    for col in response.nonzero()[1]:
-        print(feature_names[col], ' - ', response[0, col])
-
+    #print(tfidf_matrix)
+    # response = tfidf.transform([list(token_dict.values())[index]])
+    #response = tfidf.transform([list(token_dict.values())[index]])
+    # print(response)
+    # feature_names = tfidf.get_feature_names()
+    # for col in response.nonzero()[1]:
+    #     print(feature_names[col], ' - ', response[0, col])
+    #
+    #print("Calcul similarities")
+    #print(tfidf_matrix[index:index+1])
 
     #define similarities
-    cosine_similarities = linear_kernel(tfidf_matrix[index:index+1], tfidf_matrix).flatten()
-    related_docs_indices = [i for i in cosine_similarities.argsort()[::-1] if i != index]
+    #cosine_similarities = linear_kernel(tfidf_matrix[index:index+1], tfidf_matrix).flatten()
+    # La matrice etait dans la ligne au dessus inversée ;)
+    cosine_similarities = linear_kernel(tfidf_matrix[0:1], tfidf_matrix).flatten()
+    #print(cosine_similarities)
+
+    #related_docs_indices = [i for i in cosine_similarities.argsort()[::-1] if i != index]
+    #du coup, il fallait viré l'index 0, pas le dernier (relicat de mon code)
+    related_docs_indices = [i for i in cosine_similarities.argsort()[::-1] if i != 0]
+    #print(related_docs_indices)
 
     #return top_n similar documents in the matrix. For each of them:
     # - index of the document in the matrix
-    # - score of similairty
+    # - score of similarity
     # - text of the similar document.
-    return [(index, cosine_similarities[index], list(token_dict.values())[index]) for index in related_docs_indices][0:top_n]
+    return [(index, cosine_similarities[index],reverse_dict[index]) for index in related_docs_indices][0:top_n]

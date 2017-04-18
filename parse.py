@@ -1,3 +1,5 @@
+# -*-coding:utf-8 -*
+
 import os
 import socket
 import re
@@ -19,7 +21,8 @@ import xml.etree.ElementTree as ET
 from TwitterAPI import TwitterAPI
 from pyshorteners import Shortener
 
-#import elastic.export_to_es as es
+import kruncher.utils as utils
+import elastic.similarity_greg as similarity
 
 # Utils
 current_milli_time = lambda: int(round(time.time() * 1000))
@@ -41,7 +44,7 @@ def sanitizeText(text) :
 # Debug
 
 debug = False
-doTweet = True
+doTweet = False
 # debug on local
 if "digital-gf.local" in socket.gethostname() :
 	print("Local testing...")
@@ -53,13 +56,9 @@ tweet_size = 140
 tweet_link_size = 1+23
 
 # Load Services Settings
-params_file="settings.xml"
-tree = ET.parse(params_file)
-root = tree.getroot()
+root = utils.loadxml("settings.xml")
 # Load security settings
-auth_file="auth.xml"
-auth_tree = ET.parse(auth_file)
-auth_root = auth_tree.getroot()
+auth_root = utils.loadxml("auth.xml")
 
 print(datetime.now())
 
@@ -79,10 +78,22 @@ if not os.path.exists(out_directory+'/en'): os.makedirs(out_directory+'/en')
 
 # Create JSON feed
 feed_json_file=root.find('settings').find('feed_json_file').text
-json_data = {}
-with open(feed_json_file) as json_file:
-	json_data = json.load(json_file)
-	if debug : print("+ JSON size : "+str(len(json_data)))
+json_data = utils.loadjson(feed_json_file)
+
+# Keep last hundred messages
+if debug : print("+ JSON size : "+str(len(json_data)))
+while len(json_data) > 100 :
+	m = min(json_data)
+	if debug : print("Removed "+m)
+	del json_data[m]
+
+# create dictionnary for similarity
+token_dict = []
+for news in json_data :
+	for t in json_data[news] :
+		token_dict.append(t['title'])
+
+if debug : print("+ JSON size : "+str(len(json_data)))
 
 # Create RSS feed
 feed_atom_file=root.find('settings').find('feed_atom_file').text
@@ -265,8 +276,14 @@ for service in root.findall('service'):
 						print("Content filter matched on "+filter_value)
 						filtered_post = True
 
-			# Twitter
 			if not filtered_post :
+				# Test similarity
+				token_dict.append(post_title)
+				sim_results = similarity.find_similar(token_dict)
+				print(sim_results)
+				#print("%.2f".format(sim_results[0][1]))
+
+				# Twitter
 				tweet_text = post_title
 				tweet_size_allowed = tweet_size - tweet_link_size
 
@@ -290,7 +307,7 @@ for service in root.findall('service'):
 						tweet_text = tweet_text+" "+rss_twitter
 
 				# Add Image & push tweet
-				if out_img :
+				if out_img and not out_img.startswith("data:"):
 					if debug : print("+---> Image : " + out_img)
 					if out_img.startswith("//") :
 						out_img = "https:"+out_img
@@ -311,6 +328,12 @@ for service in root.findall('service'):
 					if doTweet : r = twitterapi.request('statuses/update', {'status':tweet_text})
 					if debug : print("tweet : "+tweet_text)
 
+				# Remove oldest message from json :
+				if len(json_data) >= 100 :
+					m = min(json_data)
+					if debug : print("Removed "+m)
+					del json_data[m]
+
 				# Add to json
 				post_id = str(current_milli_time())
 				json_data[post_id] = []
@@ -322,6 +345,8 @@ for service in root.findall('service'):
     				'source': post.link,
 					'image': out_img,
 					'tags' : post_tags,
+					'similarity' : sim_results[0][1],
+					'similarity_with' : sim_results[0][2],
 					'text' : out_text
 				})
 
@@ -329,6 +354,7 @@ for service in root.findall('service'):
 
 #Write json
 with open(feed_json_file, 'w') as jsonfile:
+    #json.dump(json_data, jsonfile, sort_keys=True)
     json.dump(json_data, jsonfile)
 
 #Write associated RSS feed

@@ -1,4 +1,4 @@
-#2017/03/23 David Campion
+#017/03/23 David Campion
 
 #usage:
 # import this library in your code:
@@ -36,10 +36,10 @@ from nltk.tokenize import TreebankWordTokenizer #import the Treebank tokenizer
 from nltk.tokenize import WordPunctTokenizer
 
 #import lib to detect language
-import detect_lang
+import elastic.detect_lang
 
 #number of news in the dictionary
-NB_NEWS = 9
+NB_NEWS = 6
 
 #name stemmers
 stemmer_fr=FrenchStemmer()
@@ -115,7 +115,7 @@ def stem_tokens(tokens, stemmer):
 #tokenize a  text depending on its language
 def tokenize(text):
     #check language
-    language = detect_lang.get_language(text)
+    language = elastic.detect_lang.get_language(text)
     if language == 'french':
         #tokenize text
         tokens = tokenizer.tokenize(text)
@@ -145,7 +145,6 @@ def tokenize(text):
         #print("stems: ", stems)
     return stems
 
-
 #------
 #clean text: remove punctuation and get lower characters
 def clean_text(text):
@@ -162,13 +161,13 @@ def clean_text(text):
 def initiate_dict(token_dict):
     #number fof news in the dict.
     count = NB_NEWS
+    #count = len(token_dict)
     #iterate a push news with the new entry
     while (count >= 0):
         token_dict["news_" + str(count)] = ""
         count = count - 1
     #uncomment to display the dict
-    #print(token_dict)
-
+    print(token_dict)
 
 #------
 #------
@@ -176,12 +175,13 @@ def initiate_dict(token_dict):
 def add_news_to_dict(token_dict,text):
     #number of news in the dict.
     count = NB_NEWS
+    #count=len(token_dict)
     #iterate a push news with the new entry
     while (count > 0):
         token_dict["news_" + str(count)] = token_dict["news_" + str(count-1)]
         count = count - 1
     token_dict["news_0"] = clean_text(text)
-
+    print(token_dict)
 
 #------
 #------
@@ -199,12 +199,12 @@ def find_similar(token_dict, index, top_n = 1): #tfidf_matrix,
 
 
     #uncomment below to view tfidf of other features
-    print("tfidf matrix: " , tfidf_matrix)
-    response = tfidf.transform([list(token_dict.values())[index]])
-    print(response)
-    feature_names = tfidf.get_feature_names()
-    for col in response.nonzero()[1]:
-        print(feature_names[col], ' - ', response[0, col])
+    #print(tfidf_matrix)
+    #response = tfidf.transform([list(token_dict.values())[index]])
+    #print(response)
+    #feature_names = tfidf.get_feature_names()
+    #for col in response.nonzero()[1]:
+    #    print(feature_names[col], ' - ', response[0, col])
 
 
     #define similarities
