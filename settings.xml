@@ -342,6 +342,21 @@
 		<twitter_account>@TheHackersNews</twitter_account>
 		<twitter_mention>#hackers</twitter_mention>
 	</service>
+
+	<service name="Motherboard Vice" lang="en">
+		<url type="rss">https://motherboard.vice.com/en_us/rss</url>
+		<twitter_account>@motherboard</twitter_account>
+		<twitter_mention>#mboard</twitter_mention>
+		<text type="div" name="class" section="p">article__body</text>
+		<image type="div" name="class" section="img" attribute="src">long-form-article__lede-image</image>
+		<image_alt type="div" name="class" section="img" attribute="src">short-form-article__body__content</image_alt>
+		<!--filters>
+			<filter type="title">revue de web</filter>
+		</filters-->
+	</service>
+
+
+
 	<!-- Todo : Spaces ?
 http://thelongandshort.org/spaces/hot-desks-design-thinking-ideo
 -->

@@ -276,7 +276,8 @@ for service in general_settings.findall('service'):
 			else : sim_desc = sim_results[0][2]
 			#print("%.2f".format(sim_results[0][1]))
 			if (sim_grade > 0.5) :
-				print("Duplicate with [{}] Score : {}".format(sim_desc,sim_grade))
+				# A tester..
+				print("Duplicate with [{}] Score : {}".format(sim_desc.encode('utf-8'),sim_grade))
 				filtered_post = True
 
 			text_dict.append(out_text)
