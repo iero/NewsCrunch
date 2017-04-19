@@ -32,6 +32,7 @@ def extractImageFromPage(soup,type,name,value,section,attribute) :
     out_img=""
     if (name == "class") :
         img_sec=soup.find(type, class_=value)
+        #print(img_sec)
     if img_sec is not None and img_sec.find(section) is not None :
         out_img=img_sec.find(section).get(attribute)
     return out_img

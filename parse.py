@@ -1,5 +1,7 @@
 # -*-coding:utf-8 -*
 
+from __future__ import unicode_literals
+
 import os
 import socket
 import re
@@ -237,13 +239,23 @@ for service in general_settings.findall('service'):
 							post_title = re.sub(t,"#"+t,post_title)
 
 			# Grab main image
-			rss_img_type = service.find('image').get('type')
-			rss_img_name = service.find('image').get('name')
-			rss_img_value = service.find('image').text
-			rss_img_section = service.find('image').get('section')
-			rss_img_attribute = service.find('image').get('attribute')
+			out_img=""
+			if service.find('image') is not None :
+				rss_img_type = service.find('image').get('type')
+				rss_img_name = service.find('image').get('name')
+				rss_img_value = service.find('image').text
+				rss_img_section = service.find('image').get('section')
+				rss_img_attribute = service.find('image').get('attribute')
 
-			out_img= utils.extractImageFromPage(soup,rss_img_type,rss_img_name,rss_img_value,rss_img_section,rss_img_attribute)
+				out_img= utils.extractImageFromPage(soup,rss_img_type,rss_img_name,rss_img_value,rss_img_section,rss_img_attribute)
+			if not out_img and service.find('image_alt') is not None :
+				rss_img_type = service.find('image_alt').get('type')
+				rss_img_name = service.find('image_alt').get('name')
+				rss_img_value = service.find('image_alt').text
+				rss_img_section = service.find('image_alt').get('section')
+				rss_img_attribute = service.find('image_alt').get('attribute')
+
+				out_img= utils.extractImageFromPage(soup,rss_img_type,rss_img_name,rss_img_value,rss_img_section,rss_img_attribute)
 
 			#Filters title
 			if service.find('filters') is not None :
@@ -264,7 +276,7 @@ for service in general_settings.findall('service'):
 			else : sim_desc = sim_results[0][2]
 			#print("%.2f".format(sim_results[0][1]))
 			if (sim_grade > 0.5) :
-				print("Duplicate with ["+sim_desc+"] Score : "+str(sim_grade))
+				print("Duplicate with [{}] Score : {}".format(sim_desc,sim_grade))
 				filtered_post = True
 
 			text_dict.append(out_text)

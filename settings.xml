@@ -125,7 +125,7 @@
 		<twitter_account>@science_avenir</twitter_account>
 		<twitter_mention>#science</twitter_mention>
 		<text type="div" name="class" section="p">corps article-sea-home-a article-sea-hightech-a</text>
-		<image type="div" name="class" section="img" attribute="src">article-image</image>
+		<image type="div" name="class" section="img" attribute="data-src">article-image</image>
 	</service>
 
 	<service name="Itespresso" lang="fr">
@@ -269,13 +269,23 @@
 		<twitter_account>@motherboard</twitter_account>
 		<twitter_mention>#mboard</twitter_mention>
 		<text type="div" name="class" section="p">article__body</text>
-		<image type="div" name="class" section="img" attribute="src">short-form-article__body__content</image>
+		<image type="div" name="class" section="img" attribute="src">long-form-article__lede-image</image>
+		<image_alt type="div" name="class" section="img" attribute="src">short-form-article__body__content</image_alt>
 		<!--filters>
 			<filter type="title">revue de web</filter>
 		</filters-->
 	</service>
 
-
+	<service name="Zdnet" lang="fr">
+		<url type="rss">http://www.zdnet.fr/feeds/rss/actualites/</url>
+		<!--twitter_account>@zdnet</twitter_account-->
+		<twitter_mention>#zdnet</twitter_mention>
+		<text type="div" name="class" section="p">storyBody</text>
+		<image type="div" name="class" section="img" attribute="src">storyBody</image>
+		<!--filters>
+			<filter type="title">revue de web</filter>
+		</filters-->
+	</service>
 
 	<!--service name="Piwee" lang="fr">
 			<url>http://piwee.net/feed/</url>
