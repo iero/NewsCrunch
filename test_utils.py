@@ -19,8 +19,14 @@ if __name__ == "__main__":
     # print("+--> Image : "+ out_img)
 
 
-    url="https://www.sciencesetavenir.fr/high-tech/drones/video-qu-advient-il-lorsqu-un-drone-est-frappe-par-la-foudre_112261"
+    # url="https://www.sciencesetavenir.fr/high-tech/drones/video-qu-advient-il-lorsqu-un-drone-est-frappe-par-la-foudre_112261"
+    # web_page = requests.get(url, headers=headers)
+    # soup = BeautifulSoup(web_page.content, "html.parser")
+    # out_img= utils.extractImageFromPage(soup,"div","class","article-image","img","data-src")
+    # print("+--> Image : "+ out_img)
+
+    url="https://motherboard.vice.com/en_us/article/nsa-eastnets-hack-banking-network-middle-east"
     web_page = requests.get(url, headers=headers)
     soup = BeautifulSoup(web_page.content, "html.parser")
-    out_img= utils.extractImageFromPage(soup,"div","class","article-image","img","data-src")
+    out_img= utils.extractImageFromPage(soup,"div","class","short-form-article__body__content","img","src")
     print("+--> Image : "+ out_img)

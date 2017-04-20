@@ -7,6 +7,7 @@ import socket
 import re
 import time
 import json
+import pytz
 
 import urllib3
 import requests
@@ -17,6 +18,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from feedgen.feed import FeedGenerator
 from datetime import datetime
+from pytz import timezone
 
 import xml.etree.ElementTree as ET
 
@@ -277,7 +279,7 @@ for service in general_settings.findall('service'):
 			#print("%.2f".format(sim_results[0][1]))
 			if (sim_grade > 0.5) :
 				# A tester..
-				print("Duplicate with [{}] Score : {}".format(sim_desc.encode('utf-8'),sim_grade))
+				print("+--x Duplicate with [{}] Score : {}".format(sim_desc.encode('utf-8'),sim_grade))
 				filtered_post = True
 
 			text_dict.append(out_text)
@@ -324,11 +326,17 @@ for service in general_settings.findall('service'):
 						if doTweet : r = twitterapi.request('statuses/update_with_media', {'status':tweet_text}, {'media[]':data})
 						if debug : print("tweet+picture : "+tweet_text)
 					except :
-						if doTweet : r = twitterapi.request('statuses/update', {'status':tweet_text})
-						if debug : print("tweet (problem with pic): "+tweet_text)
+						try :
+							if doTweet : r = twitterapi.request('statuses/update', {'status':tweet_text})
+							if debug : print("tweet (problem with pic): "+tweet_text)
+						except :
+							if debug : print("tweet problem : "+tweet_text)
 				else :
-					if doTweet : r = twitterapi.request('statuses/update', {'status':tweet_text})
-					if debug : print("tweet : "+tweet_text)
+					try :
+						if doTweet : r = twitterapi.request('statuses/update', {'status':tweet_text})
+						if debug : print("tweet : "+tweet_text)
+					except :
+						if debug : print("tweet problem : "+tweet_text)
 
 				# Remove oldest message from json :
 				if len(json_data) >= 100 :
@@ -342,14 +350,14 @@ for service in general_settings.findall('service'):
 				json_data[post_id].append({
 					'service': service_name,
 					'title': post_title,
-					'date' : post.updated,
+					'date' : datetime.now(pytz.timezone('Europe/Paris')).isoformat(),
 					'lang' : rss_lang,
     				'source': post.link,
 					'image': out_img,
 					'tags' : post_tags,
-					'similarity' : sim_grade,
+					'similarity' : str(sim_grade),
 					'similarity_with' : sim_desc,
-					'similiarity_content' : sim_text_grade,
+					'similiarity_content' : str(sim_text_grade),
 					'text' : out_text,
 					'text_size' : str(len(out_text.split()))
 				})
@@ -362,13 +370,20 @@ with open(feed_json_file, 'w') as jsonfile:
     json.dump(json_data, jsonfile)
 
 #Write associated RSS feed
-#for p in data['people']:
+# TODO : Reverse
+reverse_news=[]
 for news in json_data :
-	for t in reversed(json_data[news]) :
+	reverse_news.append(news)
+reverse_news.reverse()
+
+#for news in json_data :
+for news in reverse_news :
+	for t in json_data[news] :
 		fe = fg.add_entry()
 		fe.id(news)
 		fe.title(t['title'])
 		fe.author(name=t['service'])
+		# TODO A checker
 		#fe.updated(t['date'])
 		fe.link(href=t['source'])
 
@@ -376,5 +391,7 @@ for news in json_data :
 			out_text="<img src=\""+t['image']+"\"/><p>"+t['text']+"</p>"
 		else :
 			out_text="<p>"+t['text']+"</p>"
+
+		out_text=out_text+"<p>"+"Similarity of " +str(t['similarity'])+" with "+t['similarity_with']+"</p>"
 		fe.content(src=out_text, type="raw")
 fg.atom_file(feed_atom_file) # Write the RSS feed to a file
