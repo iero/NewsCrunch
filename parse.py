@@ -393,5 +393,5 @@ for news in reverse_news :
 			out_text="<p>"+t['text']+"</p>"
 
 		out_text=out_text+"<p>"+"Similarity of " +str(t['similarity'])+" with "+t['similarity_with']+"</p>"
-		fe.content(src=out_text, type="raw")
+		fe.content(src=out_text, type="html")
 fg.atom_file(feed_atom_file) # Write the RSS feed to a file
