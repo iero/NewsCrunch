@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <data>
 
-
-
 	<settings>
 		<author>Gregori Fabre</author>
 		<output>output</output>
@@ -13,6 +11,8 @@
 		<feed_atom_file>feed_atom.xml</feed_atom_file>
 		<feed_name>Veille</feed_name>
 		<feed_url>http://www.iero.org/feed/newscrunch</feed_url>
+		<max_news>500</max_news>
+		<max_news_rss>100</max_news_rss>
 	</settings>
 
 	<!-- French Digital -->
@@ -97,6 +97,7 @@
 		<twitter_mention>#macg</twitter_mention>
 		<text type="div" name="class" section="p">field-item even</text>
 		<image type="div" name="class" section="img" attribute="src">field-item even</image>
+		<!--image_alt type="div" name="class" section="img" attribute="src">field-item even</image_alt-->
 		<filters>
 			<filter type="title">refurb</filter>
 			<filter type="title">concours</filter>
@@ -271,6 +272,7 @@
 		<text type="div" name="class" section="p">article__body</text>
 		<image type="div" name="class" section="img" attribute="src">long-form-article__lede-image</image>
 		<image_alt type="div" name="class" section="img" attribute="src">short-form-article__body__content</image_alt>
+		<tags type="div">topics topic-list</tags>
 		<!--filters>
 			<filter type="title">revue de web</filter>
 		</filters-->
@@ -350,6 +352,7 @@
 		<text type="div" name="class" section="p">article__body</text>
 		<image type="div" name="class" section="img" attribute="src">long-form-article__lede-image</image>
 		<image_alt type="div" name="class" section="img" attribute="src">short-form-article__body__content</image_alt>
+		<tags type="div">topics topic-list</tags>
 		<!--filters>
 			<filter type="title">revue de web</filter>
 		</filters-->

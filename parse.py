@@ -49,10 +49,13 @@ auth_settings = utils.loadxml("auth.xml")
 print(datetime.now())
 
 for service in auth_settings.findall('service') :
-    if service.get("name") == "bitly" :
-        shortener = Shortener('Bitly', bitly_token=service.find("token").text)
-    elif service.get("name") == "twitter" :
-        twitterapi = TwitterAPI(consumer_key=service.find("consumer_key").text, consumer_secret=service.find("consumer_secret").text, access_token_key=service.find("access_token_key").text, access_token_secret=service.find("access_token_secret").text)
+	if service.get("name") == "bitly" :
+		shortener = Shortener('Bitly', bitly_token=service.find("token").text)
+	elif service.get("name") == "twitter" :
+		consumer_key=service.find("consumer_key").text
+		consumer_secret=service.find("consumer_secret").text
+		access_token_key=service.find("access_token_key").text
+		access_token_secret=service.find("access_token_secret").text
 
 headers = {'User-Agent': general_settings.find('settings').find('User-Agent').text}
 
@@ -77,9 +80,12 @@ if not os.path.exists(out_directory+'/en'): os.makedirs(out_directory+'/en')
 feed_json_file=general_settings.find('settings').find('feed_json_file').text
 json_data = utils.loadjson(feed_json_file)
 
-# Keep last hundred messages
-if debug : print("+ JSON size : "+str(len(json_data)))
-while len(json_data) > 100 :
+# Keep last X messages for process and for RSS
+nbmax_news=float(general_settings.find('settings').find('max_news').text)
+nbmax_rss_news=float(general_settings.find('settings').find('max_news_rss').text)
+
+#if debug : print("+ JSON size : "+str(len(json_data)))
+while len(json_data) > nbmax_news :
 	m = min(json_data)
 	if debug : print("Removed "+m)
 	del json_data[m]
@@ -92,7 +98,7 @@ for news in json_data :
 		title_dict.append(t['title'])
 		text_dict.append(t['text'])
 
-if debug : print("+ JSON size : "+str(len(json_data)))
+if debug : print("+ JSON size : "+str(len(json_data))+" on "+str(nbmax_news))
 
 # Create RSS feed
 feed_atom_file=general_settings.find('settings').find('feed_atom_file').text
@@ -320,6 +326,9 @@ for service in general_settings.findall('service'):
 						dom =  '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_web_page)
 						out_img = dom+out_img
 					#print(out_img)
+
+					twitterapi = TwitterAPI(consumer_key=consumer_key, consumer_secret=consumer_secret, access_token_key=access_token_key, access_token_secret=access_token_secret)
+
 					try :
 						response = requests.get(out_img, headers=headers, allow_redirects=True)
 						data = response.content
@@ -339,7 +348,7 @@ for service in general_settings.findall('service'):
 						if debug : print("tweet problem : "+tweet_text)
 
 				# Remove oldest message from json :
-				if len(json_data) >= 100 :
+				if len(json_data) >= nbmax_news :
 					m = min(json_data)
 					if debug : print("Removed "+m)
 					del json_data[m]
@@ -378,22 +387,25 @@ reverse_news.sort()
 reverse_news.reverse()
 
 #for news in json_data :
+n=0
 for news in reverse_news :
 	for t in json_data[news] :
-		fe = fg.add_entry()
-		fe.id(news)
-		fe.title(t['title'])
-		fe.author(name=t['service'])
-		fe.published(t['date'])
-		fe.updated(t['date'])
-		fe.link(href=t['source'])
+		if n < nbmax_rss_news :
+			fe = fg.add_entry()
+			fe.id(news)
+			fe.title(t['title'])
+			fe.author(name=t['service'])
+			fe.published(t['date'])
+			fe.updated(t['date'])
+			fe.link(href=t['source'])
 
-		if t['image'] is not None :
-			out_text="<img src=\""+t['image']+"\"/><p>"+t['text']+"</p>"
-		else :
-			out_text="<p>"+t['text']+"</p>"
+			if t['image'] is not None :
+				out_text="<img src=\""+t['image']+"\"/><p>"+t['text']+"</p>"
+			else :
+				out_text="<p>"+t['text']+"</p>"
 
-		out_text=out_text+"<p>"+"Similarity of " +str(t['similarity'])+" with "+t['similarity_with']+"</p>"
-		fe.content(content=out_text, type="html")
+				out_text=out_text+"<p>"+"Similarity of " +str(t['similarity'])+" with "+t['similarity_with']+"</p>"
+				fe.content(content=out_text, type="html")
+			n = n+1
 
 fg.atom_file(feed_atom_file) # Write the RSS feed to a file
