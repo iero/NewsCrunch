@@ -374,6 +374,7 @@ with open(feed_json_file, 'w') as jsonfile:
 reverse_news=[]
 for news in json_data :
 	reverse_news.append(news)
+reverse_news.sort()
 reverse_news.reverse()
 
 #for news in json_data :
@@ -383,8 +384,8 @@ for news in reverse_news :
 		fe.id(news)
 		fe.title(t['title'])
 		fe.author(name=t['service'])
-		# TODO A checker
-		#fe.updated(t['date'])
+		fe.published(t['date'])
+		fe.updated(t['date'])
 		fe.link(href=t['source'])
 
 		if t['image'] is not None :
@@ -393,5 +394,6 @@ for news in reverse_news :
 			out_text="<p>"+t['text']+"</p>"
 
 		out_text=out_text+"<p>"+"Similarity of " +str(t['similarity'])+" with "+t['similarity_with']+"</p>"
-		fe.content(src=out_text, type="html")
+		fe.content(content=out_text, type="html")
+
 fg.atom_file(feed_atom_file) # Write the RSS feed to a file
