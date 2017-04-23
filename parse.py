@@ -155,18 +155,19 @@ for service in general_settings.findall('service'):
 
 		# Continue if new page and test redirection
 		if not filtered_post and not os.path.isfile(rss_dir+'/'+entry):
-			if debug : print("+-> " + link)
-			if debug : print("+--> " + rss_dir+'/'+entry)
 
 			# Sanitize page url and get redirection target if needed
 			web_page = requests.get(link, headers=headers, allow_redirects=True)
 			if web_page.history:
 				link = web_page.url.rsplit('?', 1)[0]
-				if debug : print("+--> " + link)
+				if debug : print("+R-> " + link)
 				web_page = requests.get(link, headers=headers)
+			else :
+				if debug : print("+--> " + link)
+
+			if debug : print("+--> " + rss_dir+'/'+entry)
 
 			# Parse page
-			#if debug : print("+-> " + web_page.url)
 			soup = BeautifulSoup(web_page.content, "html.parser")
 
 			# Get pages from selected category
@@ -272,7 +273,7 @@ for service in general_settings.findall('service'):
 					filter_value = filter.text
 					filter_result = soup.find(filter_type, class_=filter_value)
 					if filter_result is not None :
-						print("Content filter matched on "+filter_value)
+						print("+--x Content filter matched on "+filter_value)
 						filtered_post = True
 
 			# Test similarity
@@ -284,7 +285,6 @@ for service in general_settings.findall('service'):
 			else : sim_desc = sim_results[0][2]
 			#print("%.2f".format(sim_results[0][1]))
 			if (sim_grade > 0.5) :
-				# A tester..
 				print("+--x Duplicate with [{}] Score : {}".format(sim_desc.encode('utf-8'),sim_grade))
 				filtered_post = True
 
@@ -318,7 +318,7 @@ for service in general_settings.findall('service'):
 
 				# Add Image & push tweet
 				if out_img and not out_img.startswith("data:"):
-					if debug : print("+---> Image : " + out_img)
+					if debug : print("+--> Pic : " + out_img)
 					if out_img.startswith("//") :
 						out_img = "https:"+out_img
 					elif out_img.startswith("/") :
@@ -333,24 +333,24 @@ for service in general_settings.findall('service'):
 						response = requests.get(out_img, headers=headers, allow_redirects=True)
 						data = response.content
 						if doTweet : r = twitterapi.request('statuses/update_with_media', {'status':tweet_text}, {'media[]':data})
-						if debug : print("tweet+picture : "+tweet_text)
+						if debug : print("+--x TweetPic : "+tweet_text)
 					except :
 						try :
 							if doTweet : r = twitterapi.request('statuses/update', {'status':tweet_text})
-							if debug : print("tweet (problem with pic): "+tweet_text)
+							if debug : print("+--x TweetNoPicPb : "+tweet_text)
 						except :
-							if debug : print("tweet problem : "+tweet_text)
+							if debug : print("+--x TweetPb : "+tweet_text)
 				else :
 					try :
 						if doTweet : r = twitterapi.request('statuses/update', {'status':tweet_text})
-						if debug : print("tweet : "+tweet_text)
+						if debug : print("+--x Tweet : "+tweet_text)
 					except :
-						if debug : print("tweet problem : "+tweet_text)
+						if debug : print("+--x TweetPb : "+tweet_text)
 
 				# Remove oldest message from json :
 				if len(json_data) >= nbmax_news :
 					m = min(json_data)
-					if debug : print("Removed "+m)
+					if debug : print("+--> Removed "+m)
 					del json_data[m]
 
 				# Add to json
@@ -371,7 +371,7 @@ for service in general_settings.findall('service'):
 					'text_size' : str(len(out_text.split()))
 				})
 
-			print(" "+entry+" created")
+			print("+--> "+entry+" created")
 
 #Write json
 with open(feed_json_file, 'w') as jsonfile:
