@@ -306,14 +306,14 @@ for service in general_settings.findall('service'):
 				except :
 					tweet_text = tweet_text+" "+web_page.url
 
+				# Add source if possible
+				if (len(tweet_text) + len(rss_twitter) < tweet_size_allowed) :
+						tweet_text = tweet_text+" "+rss_twitter
+
 				# Add tags if possible
 				for t in post_tags :
 					if t not in post_title and len(post_title)+len(t)+2 <= tweet_size_allowed :
 						tweet_text = tweet_text+" #"+t
-
-				# Add source if possible
-				if (len(tweet_text) + len(rss_twitter) < tweet_size_allowed) :
-						tweet_text = tweet_text+" "+rss_twitter
 
 				# Add Image & push tweet
 				if out_img and not out_img.startswith("data:"):
