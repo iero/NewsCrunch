@@ -145,7 +145,6 @@ def tokenize(text):
         #print("stems: ", stems)
     return stems
 
-
 #------
 #clean text: remove punctuation and get lower characters
 def clean_text(text):

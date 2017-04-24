@@ -21,6 +21,7 @@
 		<url>http://www.presse-citron.net/feed/</url>
 		<text type="div" name="class" section="p">post-content description</text>
 		<image type="div" name="class" section="img" attribute="src">post-content description</image>
+		<tags type="div" name="class" section="a">tagcloud</tags>
 		<twitter_account>@pressecitron</twitter_account>
 		<twitter_mention>#pcitron</twitter_mention>
 		<sanitize>
@@ -135,7 +136,7 @@
 		<twitter_mention>#itespresso</twitter_mention>
 		<text type="div" name="class" section="p">entry-excerpt</text>
 		<image type="div" name="class" section="img" attribute="src">imageTitleWrapper</image>
-		<tags type="div" section="a">entry-breadcrumb</tags>
+		<tags type="div" name="class" section="a">entry-breadcrumb</tags>
 	</service>
 
 	<service name="Korben" lang="fr">
@@ -229,7 +230,7 @@
 		<text type="div" name="class" section="p">page-content</text>
 		<image type="div" name="class" section="img" attribute="src">page-featured-image</image>
 		<!-- add tag support -->
-		<tags type="div" section="a">categories</tags>
+		<tags type="div" name="class" section="a">categories</tags>
 		<filters>
 			<filter type="class" name="subtitle" section="h2">partenariat</filter>
 			<filter type="title">offres</filter>
@@ -251,7 +252,7 @@
 		<twitter_mention>#fcavazza</twitter_mention>
 		<text type="div" name="class" section="p">entry-content</text>
 		<image type="div" name="class" section="img" attribute="src">entry-content</image>
-		<tags type="span" section="a">tags-links</tags>
+		<tags type="span" name="class" section="a">tags-links</tags>
 	</service>
 
 	<service name="Petit web" lang="fr">
@@ -272,7 +273,7 @@
 		<text type="div" name="class" section="p">article__body</text>
 		<image type="div" name="class" section="img" attribute="src">long-form-article__lede-image</image>
 		<image_alt type="div" name="class" section="img" attribute="src">short-form-article__body__content</image_alt>
-		<tags type="div">topics topic-list</tags>
+		<tags type="div" name="class" section="a">topics topic-list</tags>
 		<!--filters>
 			<filter type="title">revue de web</filter>
 		</filters-->
@@ -352,7 +353,7 @@
 		<text type="div" name="class" section="p">article__body</text>
 		<image type="div" name="class" section="img" attribute="src">long-form-article__lede-image</image>
 		<image_alt type="div" name="class" section="img" attribute="src">short-form-article__body__content</image_alt>
-		<tags type="div">topics topic-list</tags>
+		<tags type="div" name="class" section="a">topics topic-list</tags>
 		<!--filters>
 			<filter type="title">revue de web</filter>
 		</filters-->

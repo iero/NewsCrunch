@@ -10,6 +10,8 @@ conda install nltk
 pip install feedgen
 pip install TwitterAPI
 pip install pyshorteners
+pip install unidecode
+
 
 # python
 import nltk

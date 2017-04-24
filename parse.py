@@ -96,25 +96,14 @@ text_dict = []
 for news in json_data :
 	for t in json_data[news] :
 		title_dict.append(t['title'])
-		text_dict.append(t['text'])
+		if (t['tags']) :
+			text_dict.append(t['tags'])
 
 if debug : print("+ JSON size : "+str(len(json_data))+" on "+str(nbmax_news))
 
 # Create RSS feed
 feed_atom_file=general_settings.find('settings').find('feed_atom_file').text
 feed_url=general_settings.find('settings').find('feed_url').text
-
-fg = FeedGenerator()
-fg.id(feed_url) #TODO : mettre numero unique
-fg.title('Veille Digitale')
-fg.subtitle('Veille Digitale par G. Fabre, Digital Advisor for Total E&P¨')
-fg.author( {'name':'Greg Fabre','email':'nomail@iero.org'} )
-#fg.logo('http://ex.com/logo.jpg')
-fg.link( href=feed_url, rel='self' )
-fg.language('fr')
-
-atomfeed = fg.atom_str(pretty=True) # Get the ATOM feed as string
-fg.atom_file(feed_atom_file) # Write the ATOM feed to a file
 
 # Parse rss services and apply
 for service in general_settings.findall('service'):
@@ -130,17 +119,16 @@ for service in general_settings.findall('service'):
 	rss_lang = service.get('lang')
 	rss_dir = '{uri.netloc}'.format(uri=rss_parsed)
 	rss_dir = out_directory + '/' + rss_lang +'/'+ rss_dir
-	print("+ RSS : "+service_name)
+	print("+[RSS] "+service_name)
 
 	if not os.path.exists(rss_dir):
-		print("+- New feed "+rss_dir+" created")
+		print("+[New feed] "+rss_dir+" created")
 		os.makedirs(rss_dir)
 		doTweet = False
 
 	feed = feedparser.parse(rss_url)
 
 	for post in feed.entries:
-
 		filtered_post = False
 
 		# Grab service tags
@@ -155,17 +143,18 @@ for service in general_settings.findall('service'):
 
 		# Continue if new page and test redirection
 		if not filtered_post and not os.path.isfile(rss_dir+'/'+entry):
+			if debug : print("+-[New entry]")
 
 			# Sanitize page url and get redirection target if needed
 			web_page = requests.get(link, headers=headers, allow_redirects=True)
 			if web_page.history:
 				link = web_page.url.rsplit('?', 1)[0]
-				if debug : print("+R-> " + link)
+				if debug : print("+-[Redir] " + link)
 				web_page = requests.get(link, headers=headers)
 			else :
-				if debug : print("+--> " + link)
+				if debug : print("+-[Link] " + link)
 
-			if debug : print("+--> " + rss_dir+'/'+entry)
+			if debug : print("+-[Local] " + rss_dir+'/'+entry)
 
 			# Parse page
 			soup = BeautifulSoup(web_page.content, "html.parser")
@@ -187,7 +176,7 @@ for service in general_settings.findall('service'):
 							for t in text_sec.find_all(sel_section):
 								if sel_filter in t :
 									filtered_post = False
-									if debug : print("+--> page allowed : "+sel_filter)
+									if debug : print("+-[Page allowed] : "+sel_filter)
 
 			# Sanitize title
 			post_title = post.title
@@ -205,7 +194,7 @@ for service in general_settings.findall('service'):
 					#print("test "+filter_value+" in "+post_title.lower())
 					# based on title
 					if filter_type == "title" and filter_value in post_title.lower() :
-						print("+--x Title filter matched on "+filter_value)
+						print("+-[Title filter] matched on "+filter_value)
 						filtered_post = True
 					# based on content
 					if filter_type == "class" :
@@ -214,7 +203,7 @@ for service in general_settings.findall('service'):
 						#print(filter_name)
 						f=soup.find(filter_section, class_=filter_name)
 						if f is not None and filter_value in f.get_text().lower() :
-							print("+--x Content filter matched on "+filter_value)
+							print("+-[Content filter] matched on "+filter_value)
 							filtered_post = True
 
 			# Grab text
@@ -230,22 +219,16 @@ for service in general_settings.findall('service'):
 			file.close()
 
 			# Grab tags
-			if service.find('tags') is not None :
-				tags_type = service.find('tags').get('type')
-				tags_section = service.find('tags').get('section')
-				tags_value = service.find('tags').text
-				tags_sec=soup.find(tags_type, class_=tags_value)
-				if tags_sec is not None and tags_sec.find_all(tags_section) is not None :
-					for t in tags_sec.find_all(tags_section):
-						tag = t.get_text().lower()
-						if " " not in tag : post_tags.append(tag)
-					if post_tags and debug :
-						print("+--> Tags : "+str(post_tags))
-					# Replace words by tags in title
-					tweet_size_allowed = tweet_size - tweet_link_size
-					for t in post_tags :
-						if t in post_title and len(post_title)+len(t) < tweet_size_allowed :
-							post_title = re.sub(t,"#"+t,post_title)
+			# if service.find('tags') is not None :
+			# 	print("Looking for tags")
+			# 	tags_type = service.find('tags').get('type')
+			# 	tags_name = service.find('tags').get('name')
+			# 	tags_section = service.find('tags').get('section')
+			# 	tags_value = service.find('tags').text
+			# 	post_tags = utils.extractTagsFromPage(soup, tags_type, tags_name, tags_section, tags_value)
+			#
+			# 	if post_tags and debug : print("+-[Tags] "+str(post_tags))
+
 
 			# Grab main image
 			out_img=""
@@ -273,10 +256,10 @@ for service in general_settings.findall('service'):
 					filter_value = filter.text
 					filter_result = soup.find(filter_type, class_=filter_value)
 					if filter_result is not None :
-						print("+--x Content filter matched on "+filter_value)
+						print("+-[Content filter] matched on "+filter_value)
 						filtered_post = True
 
-			# Test similarity
+			# Test similarity on title
 			title_dict.append(post_title)
 			sim_results = similarity.find_similar(title_dict)
 			#print(sim_results)
@@ -285,12 +268,26 @@ for service in general_settings.findall('service'):
 			else : sim_desc = sim_results[0][2]
 			#print("%.2f".format(sim_results[0][1]))
 			if (sim_grade > 0.5) :
-				print("+--x Duplicate with [{}] Score : {}".format(sim_desc.encode('utf-8'),sim_grade))
+				print("+-[Duplicate] with [{}] Score : {}".format(sim_desc.encode('utf-8'),sim_grade))
 				filtered_post = True
+			else :
+				if debug : print("+-[Test Duplicate] with [{}] Score : {}".format(sim_desc.encode('utf-8'),sim_grade))
 
-			text_dict.append(out_text)
-			sim_text_results = similarity.find_similar(text_dict)
-			sim_text_grade=float("{0:.2f}".format(sim_text_results[0][1]))
+			# find X most represented keywords
+			for t in similarity.findTags(out_text,10) :
+				post_tags.append(t)
+
+			# Test similarity on text
+			# text_dict.append(out_text)
+			# sim_text_results = similarity.find_similar(text_dict)
+			# sim_text_grade=float("{0:.2f}".format(sim_text_results[0][1]))
+			# sim_text_desc = utils.findArticlefromText(json_data,sim_text_results[0][2])
+
+			# Replace words by tags in title
+			tweet_size_allowed = tweet_size - tweet_link_size
+			for t in post_tags :
+				if t in post_title and len(post_title)+len(t) < tweet_size_allowed :
+					post_title = re.sub(t,"#"+t,post_title)
 
 			if not filtered_post :
 				# Twitter
@@ -318,7 +315,7 @@ for service in general_settings.findall('service'):
 
 				# Add Image & push tweet
 				if out_img and not out_img.startswith("data:"):
-					if debug : print("+--> Pic : " + out_img)
+					if debug : print("+-[img] " + out_img)
 					if out_img.startswith("//") :
 						out_img = "https:"+out_img
 					elif out_img.startswith("/") :
@@ -333,24 +330,24 @@ for service in general_settings.findall('service'):
 						response = requests.get(out_img, headers=headers, allow_redirects=True)
 						data = response.content
 						if doTweet : r = twitterapi.request('statuses/update_with_media', {'status':tweet_text}, {'media[]':data})
-						if debug : print("+--x TweetPic : "+tweet_text)
+						if debug : print("+-[TweetPic] "+tweet_text)
 					except :
 						try :
 							if doTweet : r = twitterapi.request('statuses/update', {'status':tweet_text})
-							if debug : print("+--x TweetNoPicPb : "+tweet_text)
+							if debug : print("+-[TweetNoPicPb] "+tweet_text)
 						except :
-							if debug : print("+--x TweetPb : "+tweet_text)
+							if debug : print("+-[TweetPb] "+tweet_text)
 				else :
 					try :
 						if doTweet : r = twitterapi.request('statuses/update', {'status':tweet_text})
-						if debug : print("+--x Tweet : "+tweet_text)
+						if debug : print("+-[Tweet] "+tweet_text)
 					except :
-						if debug : print("+--x TweetPb : "+tweet_text)
+						if debug : print("+-[TweetPb] "+tweet_text)
 
 				# Remove oldest message from json :
 				if len(json_data) >= nbmax_news :
 					m = min(json_data)
-					if debug : print("+--> Removed "+m)
+					if debug : print("+-[Removed] "+m)
 					del json_data[m]
 
 				# Add to json
@@ -366,12 +363,14 @@ for service in general_settings.findall('service'):
 					'tags' : post_tags,
 					'similarity' : str(sim_grade),
 					'similarity_with' : sim_desc,
-					'similiarity_content' : str(sim_text_grade),
+					#'similarity_content' : str(sim_text_grade),
+					#'similarity_content_with' : sim_text_desc,
 					'text' : out_text,
 					'text_size' : str(len(out_text.split()))
 				})
 
-			print("+--> "+entry+" created")
+			if debug : print("+-[Tags] "+", ".join(post_tags))
+			print("+-[Entry] "+entry)
 
 #Write json
 with open(feed_json_file, 'w') as jsonfile:
@@ -379,7 +378,19 @@ with open(feed_json_file, 'w') as jsonfile:
     json.dump(json_data, jsonfile)
 
 #Write associated RSS feed
-# TODO : Reverse
+
+fg = FeedGenerator()
+fg.id(feed_url) #TODO : mettre numero unique
+fg.title('Veille Digitale')
+fg.subtitle(str(len(json_data))+" articles")
+fg.author( {'name':'G. Fabre, Digital Advisor for Total E&P','email':'nomail@iero.org'} )
+#fg.logo('http://ex.com/logo.jpg')
+fg.link( href=feed_url, rel='self' )
+fg.language('fr')
+
+atomfeed = fg.atom_str(pretty=True) # Get the ATOM feed as string
+fg.atom_file(feed_atom_file) # Write the ATOM feed to a file
+
 reverse_news=[]
 for news in json_data :
 	reverse_news.append(news)
@@ -404,8 +415,8 @@ for news in reverse_news :
 			else :
 				out_text="<p>"+t['text']+"</p>"
 
-				out_text=out_text+"<p>"+"Similarity of " +str(t['similarity'])+" with "+t['similarity_with']+"</p>"
-				fe.content(content=out_text, type="html")
+			out_text=out_text+"<p>"+"Similarity of " +str(t['similarity'])+" with "+t['similarity_with']+"</p>"
+			fe.content(content=out_text, type="html")
 			n = n+1
 
 fg.atom_file(feed_atom_file) # Write the RSS feed to a file

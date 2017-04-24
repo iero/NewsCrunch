@@ -2,7 +2,6 @@ import json
 
 import xml.etree.ElementTree as ET
 
-
 def loadxml(params_file) :
     tree = ET.parse(params_file)
     return tree.getroot()
@@ -41,11 +40,9 @@ def extractTextFromPage(soup,type,name,value,section) :
     out_text=""
     if (name == "class") :
         text_sec=soup.find(type, class_=value)
-
     if text_sec is not None :
         for t in text_sec.find_all(section):
             out_text=out_text+sanitizeText(t.get_text())
-
     return out_text
 
 def extractFormatedTextFromPage(soup,type,name,value,section) :
@@ -59,8 +56,26 @@ def extractFormatedTextFromPage(soup,type,name,value,section) :
 
     return out_text
 
+def extractTagsFromPage(soup,type,name,section,value) :
+    out_tags=[]
+    #print(soup)
+    if (name == "class") :
+        #print(type)
+        #print(value)
+        tags_sec=soup.find(type, class_=value)
+        #print(tags_sec)
+    if tags_sec is not None and tags_sec.find_all(section) is not None :
+        for t in tags_sec.find_all(section):
+            tag = t.get_text().lower()
+            tag = tag.replace("-","")
+            tag = tag.replace(" ","")
+            tag = tag.replace("...","")
+            print(tag)
+            if tag : out_tags.append(tag)
+    return out_tags
+
 def findArticlefromText(json_data,text) :
     for news in json_data :
     	for t in json_data[news] :
-            if text in t['raw'] :
+            if text in t['text'] :
                 return t['title']
