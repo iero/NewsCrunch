@@ -332,19 +332,24 @@ for service in general_settings.findall('service'):
 						response = requests.get(out_img, headers=headers, allow_redirects=True)
 						data = response.content
 						if doTweet : r = twitterapi.request('statuses/update_with_media', {'status':tweet_text}, {'media[]':data})
-						if debug : print("+-[TweetPic] "+tweet_text)
+						if debug :
+							print("+-[TweetPic] [{}]".format(tweet_text.encode('utf-8')))
 					except :
 						try :
 							if doTweet : r = twitterapi.request('statuses/update', {'status':tweet_text})
-							if debug : print("+-[TweetNoPicPb] "+tweet_text)
+							if debug :
+								print("+-[TweetNoPicPb] [{}]".format(tweet_text.encode('utf-8')))
 						except :
-							if debug : print("+-[TweetPb] "+tweet_text)
+							if debug :
+								print("+-[TweetPb] [{}]".format(tweet_text.encode('utf-8')))
 				else :
 					try :
 						if doTweet : r = twitterapi.request('statuses/update', {'status':tweet_text})
-						if debug : print("+-[Tweet] "+tweet_text)
+						if debug :
+							print("+-[Tweet] [{}]".format(tweet_text.encode('utf-8')))
 					except :
-						if debug : print("+-[TweetPb] "+tweet_text)
+						if debug :
+							print("+-[TweetPb] [{}]".format(tweet_text.encode('utf-8')))
 
 				# Remove oldest message from json :
 				if len(json_data) >= nbmax_news :
