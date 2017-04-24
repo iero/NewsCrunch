@@ -52,8 +52,9 @@ def extractFormatedTextFromPage(soup,type,name,value,section) :
 
     if text_sec is not None :
         for t in text_sec.find_all(section):
-            out_text=out_text+"<p>"+sanitizeText(t.get_text())+"</p>"
-
+            sText=sanitizeText(t.get_text())
+            if sText :
+                out_text=out_text+"<p>"+sText+"</p>"
     return out_text
 
 def extractTagsFromPage(soup,type,name,section,value) :

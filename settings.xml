@@ -21,6 +21,7 @@
 		<url>http://www.presse-citron.net/feed/</url>
 		<text type="div" name="class" section="p">post-content description</text>
 		<image type="div" name="class" section="img" attribute="src">post-content description</image>
+		<image_alt type="div" name="class" section="a" attribute="href">post-content description</image_alt>
 		<tags type="div" name="class" section="a">tagcloud</tags>
 		<twitter_account>@pressecitron</twitter_account>
 		<twitter_mention>#pcitron</twitter_mention>

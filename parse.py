@@ -119,7 +119,7 @@ for service in general_settings.findall('service'):
 	rss_lang = service.get('lang')
 	rss_dir = '{uri.netloc}'.format(uri=rss_parsed)
 	rss_dir = out_directory + '/' + rss_lang +'/'+ rss_dir
-	print("+[RSS] "+service_name)
+	if debug : print("+[RSS "+rss_lang+"] "+service_name)
 
 	if not os.path.exists(rss_dir):
 		print("+[New feed] "+rss_dir+" created")
@@ -213,6 +213,8 @@ for service in general_settings.findall('service'):
 			rss_text_section = service.find('text').get('section')
 
 			out_text= utils.extractTextFromPage(soup,rss_text_type,rss_text_name,rss_text_value,rss_text_section)
+
+			raw_text= utils.extractFormatedTextFromPage(soup,rss_text_type,rss_text_name,rss_text_value,rss_text_section)
 
 			file = open(rss_dir+'/'+entry, 'wb')
 			file.write(out_text.encode('utf-8'))
@@ -366,7 +368,8 @@ for service in general_settings.findall('service'):
 					#'similarity_content' : str(sim_text_grade),
 					#'similarity_content_with' : sim_text_desc,
 					'text' : out_text,
-					'text_size' : str(len(out_text.split()))
+					'text_size' : str(len(out_text.split())),
+					'raw' : raw_text
 				})
 
 			if debug : print("+-[Tags] "+", ".join(post_tags))
@@ -411,10 +414,17 @@ for news in reverse_news :
 			fe.link(href=t['source'])
 
 			if t['image'] is not None :
-				out_text="<img src=\""+t['image']+"\"/><p>"+t['text']+"</p>"
+				try :
+					out_text="<img src=\""+t['image']+"\"/>"+t['raw']
+				except :
+					out_text="<img src=\""+t['image']+"\"/><p>"+t['text']+"</p>"
 			else :
-				out_text="<p>"+t['text']+"</p>"
+				try :
+					out_text=t['raw']
+				except :
+					out_text="<p>"+t['text']+"</p>"
 
+			out_text=out_text+"<p>"+"Tags :" +str(t['tags'])+"</p>"
 			out_text=out_text+"<p>"+"Similarity of " +str(t['similarity'])+" with "+t['similarity_with']+"</p>"
 			fe.content(content=out_text, type="html")
 			n = n+1
