@@ -430,3 +430,6 @@ for news in reverse_news :
 			n = n+1
 
 fg.atom_file(feed_atom_file) # Write the RSS feed to a file
+
+print(datetime.now())
+print("Done")
