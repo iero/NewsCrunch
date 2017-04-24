@@ -286,10 +286,10 @@ for service in general_settings.findall('service'):
 			# sim_text_desc = utils.findArticlefromText(json_data,sim_text_results[0][2])
 
 			# Replace words by tags in title
-			tweet_size_allowed = tweet_size - tweet_link_size
-			for t in post_tags :
-				if t in post_title and len(post_title)+len(t) < tweet_size_allowed :
-					post_title = re.sub(t,"#"+t,post_title)
+			# tweet_size_allowed = tweet_size - tweet_link_size
+			# for t in post_tags :
+			# 	if t in post_title and len(post_title)+len(t) < tweet_size_allowed :
+			# 		post_title = re.sub(t,"#"+t,post_title)
 
 			if not filtered_post :
 				# Twitter
