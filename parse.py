@@ -311,9 +311,9 @@ for service in general_settings.findall('service'):
 						tweet_text = tweet_text+" "+rss_twitter
 
 				# Add tags if possible
-				for t in post_tags :
-					if t not in post_title and len(post_title)+len(t)+2 <= tweet_size_allowed :
-						tweet_text = tweet_text+" #"+t
+				# for t in post_tags :
+				# 	if t not in post_title and len(post_title)+len(t)+2 <= tweet_size_allowed :
+				# 		tweet_text = tweet_text+" #"+t
 
 				# Add Image & push tweet
 				if out_img and not out_img.startswith("data:"):
