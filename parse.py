@@ -71,10 +71,11 @@ else :
 	doTweet = True
 	out_directory = general_settings.find('settings').find('output').text
 
-# Create directory structure
+# Create output directory structure
 if not os.path.exists(out_directory): os.makedirs(out_directory)
 if not os.path.exists(out_directory+'/fr'): os.makedirs(out_directory+'/fr')
 if not os.path.exists(out_directory+'/en'): os.makedirs(out_directory+'/en')
+if not os.path.exists(out_directory+'/json'): os.makedirs(out_directory+'/json')
 
 # Create JSON feed
 feed_json_file=general_settings.find('settings').find('feed_json_file').text
@@ -83,6 +84,10 @@ json_data = utils.loadjson(feed_json_file)
 # Keep last X messages for process and for RSS
 nbmax_news=float(general_settings.find('settings').find('max_news').text)
 nbmax_rss_news=float(general_settings.find('settings').find('max_news_rss').text)
+
+# JSON feed for today
+today_json_file=out_directory+'/json/'+time.strftime("%Y%m%d")+".json"
+json_today = utils.loadjson(today_json_file)
 
 #if debug : print("+ JSON size : "+str(len(json_data)))
 while len(json_data) > nbmax_news :
@@ -357,8 +362,8 @@ for service in general_settings.findall('service'):
 					if debug : print("+-[Removed] "+m)
 					del json_data[m]
 
-				# Add to json
 				post_id = str(current_milli_time())
+				# Add to general json
 				json_data[post_id] = []
 				json_data[post_id].append({
 					'service': service_name,
@@ -377,16 +382,38 @@ for service in general_settings.findall('service'):
 					'raw' : raw_text
 				})
 
+				json_today[post_id] = []
+				json_today[post_id].append({
+					'service': service_name,
+					'title': post_title,
+					'date' : datetime.now(pytz.timezone('Europe/Paris')).isoformat(),
+					'lang' : rss_lang,
+    				'source': post.link,
+					'image': out_img,
+					'tags' : post_tags,
+					'similarity' : str(sim_grade),
+					'similarity_with' : sim_desc,
+					#'similarity_content' : str(sim_text_grade),
+					#'similarity_content_with' : sim_text_desc,
+					'text' : out_text,
+					'text_size' : str(len(out_text.split())),
+					'raw' : raw_text,
+					'liked' : 0,
+					'liked_by_me' : True
+				})
+
+
 			if debug : print("+-[Tags] "+", ".join(post_tags))
 			print("+-[Entry] "+entry)
 
 #Write json
 with open(feed_json_file, 'w') as jsonfile:
-    #json.dump(json_data, jsonfile, sort_keys=True)
     json.dump(json_data, jsonfile)
 
-#Write associated RSS feed
+with open(today_json_file, 'w') as jsonfile:
+    json.dump(json_today, jsonfile)
 
+#Write associated RSS feed
 fg = FeedGenerator()
 fg.id(feed_url) #TODO : mettre numero unique
 fg.title('Veille Digitale')

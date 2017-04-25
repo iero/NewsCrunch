@@ -17,16 +17,23 @@ for service in auth_root.findall('service') :
     elif service.get("name") == "twitter" :
         twitterapi = TwitterAPI(consumer_key=service.find("consumer_key").text, consumer_secret=service.find("consumer_secret").text, access_token_key=service.find("access_token_key").text, access_token_secret=service.find("access_token_secret").text)
 
-article_url="https://www.sciencesetavenir.fr/high-tech/data/le-mystere-amazon-go-quelles-technologies-pour-le-supermarche-du-futur_110932"
+#article_url="https://www.sciencesetavenir.fr/high-tech/data/le-mystere-amazon-go-quelles-technologies-pour-le-supermarche-du-futur_110932"
+#bitly_article_url = shortener.short(article_url)
+#picture_url = 'https://www.sciencesetavenir.fr/redaction/infographies/JPG/amazon_mieux.jpg'
+#text="Technologies d'Amazon Go "+bitly_article_url+" @sciences_avenir "
+#response = urllib.request.urlopen(picture_url)
+#data = response.read()
 
-bitly_article_url = shortener.short(article_url)
+#r = twitterapi.request('statuses/update_with_media', {'status':text}, {'media[]':data})
+#print(r.text)
 
-picture_url = 'https://www.sciencesetavenir.fr/redaction/infographies/JPG/amazon_mieux.jpg'
-#bitly_picture_url=shortener.short(picture_url)
-
-text="Technologies d'Amazon Go "+bitly_article_url+" @sciences_avenir "
-
-response = urllib.request.urlopen(picture_url)
-data = response.read()
-r = twitterapi.request('statuses/update_with_media', {'status':text}, {'media[]':data})
-print(r.text)
+r = twitterapi.request('statuses/home_timeline', {'count':'3'})
+for item in r.get_iterator():
+    print(item)
+    if 'text' in item:
+        print(item['text'])
+    elif 'limit' in item:
+        print("%d tweets missed" % item['limit']['track'])
+    elif 'disconnect' in item:
+        print('disconnecting because %s' % item['disconnect']['reason'])
+        break
