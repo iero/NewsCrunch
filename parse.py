@@ -1,5 +1,4 @@
 # -*-coding:utf-8 -*
-
 from __future__ import unicode_literals
 
 import os
@@ -98,15 +97,24 @@ stats_nbwords=0
 stats_nbtags=0
 
 # statistics
-for n in json_today :
-	if n == "statistics" :
-		for t in json_today[n] :
-			stats_total=t['total']
-			stats_twitted=t['twitted']
-			stats_filtered=t['filtered']
-			stats_duplicates=t['duplicates']
-			stats_nbwords=t['nbwords']
-			stats_nbtags=t['nbtags']
+if not json_today :
+	json_today["statistics"] = []
+	json_today["statistics"].append({
+		'total': stats_total,
+		'twitted': stats_twitted,
+		'filtered': stats_filtered,
+		'duplicates': stats_duplicates,
+		'nbwords': stats_nbwords,
+		'nbtags': stats_nbtags
+	})
+else :
+	for s in json_today['statistics'] :
+		stats_total=s['total']
+		stats_twitted=s['twitted']
+		stats_filtered=s['filtered']
+		stats_duplicates=s['duplicates']
+		stats_nbwords=s['nbwords']
+		stats_nbtags=s['nbtags']
 
 #if debug : print("+ JSON size : "+str(len(json_data)))
 while len(json_data) > nbmax_news :
@@ -166,8 +174,9 @@ for service in general_settings.findall('service'):
 		entry=parseURLName(link)
 
 		# Continue if new page and test redirection
-		if not filtered_post and not os.path.isfile(rss_dir+'/'+entry):
+		if not os.path.isfile(rss_dir+'/'+entry):
 			if debug : print("+-[New entry]")
+			print("+-[Entry] "+entry)
 
 			# Sanitize page url and get redirection target if needed
 			web_page = requests.get(link, headers=headers, allow_redirects=True)
@@ -293,7 +302,8 @@ for service in general_settings.findall('service'):
 			if sim_results[0][1] == 0 : sim_desc=""
 			else : sim_desc = sim_results[0][2]
 			#print("%.2f".format(sim_results[0][1]))
-			if (sim_grade > 0.5) :
+			grade_treshold=float(general_settings.find('settings').find('similarity_min').text)
+			if (sim_grade > grade_treshold) :
 				print("+-[Duplicate] with [{}] Score : {}".format(sim_desc.encode('utf-8'),sim_grade))
 				filtered_post = True
 				stats_duplicates = stats_duplicates +1
@@ -432,7 +442,6 @@ for service in general_settings.findall('service'):
 				})
 
 			if debug : print("+-[Tags] "+", ".join(post_tags))
-			print("+-[Entry] "+entry)
 			stats_total = stats_total+1
 
 #Write json
@@ -448,6 +457,8 @@ json_today["statistics"].append({
 	'nbwords': stats_nbwords,
 	'nbtags': stats_nbtags
 })
+
+if debug : print(json_today["statistics"])
 
 with open(today_json_file, 'w') as jsonfile:
     json.dump(json_today, jsonfile)

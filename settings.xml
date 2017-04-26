@@ -13,6 +13,7 @@
 		<feed_url>http://www.iero.org/feed/newscrunch</feed_url>
 		<max_news>500</max_news>
 		<max_news_rss>100</max_news_rss>
+		<similarity_min>0.4</similarity_min>
 	</settings>
 
 	<!-- French Digital -->
