@@ -360,6 +360,8 @@ for service in general_settings.findall('service'):
 				# 		if debug : print("[Add tag to tweet] "+t)
 						#tweet_text = tweet_text+" #"+t
 
+				twitterapi = TwitterAPI(consumer_key=consumer_key, consumer_secret=consumer_secret, access_token_key=access_token_key, access_token_secret=access_token_secret)
+
 				# Add Image & push tweet
 				if out_img and not out_img.startswith("data:"):
 					if debug : print("+-[img] " + out_img)
@@ -371,30 +373,16 @@ for service in general_settings.findall('service'):
 						out_img = dom+out_img
 					#print(out_img)
 
-					twitterapi = TwitterAPI(consumer_key=consumer_key, consumer_secret=consumer_secret, access_token_key=access_token_key, access_token_secret=access_token_secret)
-
-					# try :
 					response = requests.get(out_img, headers=headers, allow_redirects=True)
 					data = response.content
+					
 					r = twitterapi.request('statuses/update_with_media', {'status':tweet_text}, {'media[]':data})
 					if debug :
 						print("+-[TweetPic] [{}]".format(tweet_text.encode('utf-8')))
-					# except :
-					# 	try :
-					# 		r = twitterapi.request('statuses/update', {'status':tweet_text})
-					# 		if debug :
-					# 			print("+-[TweetNoPicPb] [{}]".format(tweet_text.encode('utf-8')))
-					# 	except :
-					# 		if debug :
-					# 			print("+-[TweetPb] [{}]".format(tweet_text.encode('utf-8')))
-					else :
-						# try :
-						r = twitterapi.request('statuses/update', {'status':tweet_text})
-						if debug :
-							print("+-[Tweet] [{}]".format(tweet_text.encode('utf-8')))
-						# except :
-						# 	if debug :
-						# 		print("+-[TweetPb] [{}]".format(tweet_text.encode('utf-8')))
+				else :
+					r = twitterapi.request('statuses/update', {'status':tweet_text})
+					if debug :
+						print("+-[Tweet] [{}]".format(tweet_text.encode('utf-8')))
 
 			if not filtered_post :
 				# Remove oldest message from json :
