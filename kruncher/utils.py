@@ -22,7 +22,7 @@ def printjsonTitles(json_data) :
             print(t['title'])
 
 def sanitizeText(text) :
-	filtered_words=["adsbygoogle","toto"]
+	filtered_words=["adsbygoogle","toto","Read next:"]
 	if any(x in text for x in filtered_words):
 		return ""
 	else :
@@ -87,7 +87,7 @@ def findArticlefromText(json_data,text) :
             if text in t['text'] :
                 return t['title']
 
-
+# Get 10 mosts common tags statistics json file
 def tagsTrend(json_data) :
     taglist = []
     for item in json_data :
@@ -102,3 +102,11 @@ def tagsTrend(json_data) :
         out.append(x[0])
 
     return out
+
+def isTrendyTag(tag,json) :
+    for service in json.findall('hashtags') :
+        print(service)
+        # print(service.get("value"))
+        # if service.get("value") == tag :
+        #     print("TAG : "+tag)
+        #     return True

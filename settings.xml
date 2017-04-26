@@ -292,6 +292,19 @@
 		</filters-->
 	</service>
 
+	<service name="Silicon.fr" lang="fr">
+		<url type="rss">http://www.silicon.fr/feed</url>
+		<!--twitter_account>@zdnet</twitter_account-->
+		<twitter_mention>#silicon</twitter_mention>
+		<text type="div" name="class" section="p">article-content</text>
+		<image type="div" name="class" section="img" attribute="src">imageTitleWrapper</image>
+		<!--filters>
+			<filter type="title">revue de web</filter>
+		</filters-->
+	</service>
+
+http://www.silicon.fr/feed
+
 	<!--service name="Piwee" lang="fr">
 			<url>http://piwee.net/feed/</url>
 			<twitter_account>@piweeFR</twitter_account>
@@ -361,7 +374,13 @@
 		</filters-->
 	</service>
 
-
+	<service name="The Next Web" lang="en">
+		<url type="rss">https://thenextweb.com/feed/</url>
+		<twitter_account>@TheNextWeb</twitter_account>
+		<twitter_mention>#tnw</twitter_mention>
+		<text type="div" name="class" section="p">post-body fb-quotable u-m-3</text>
+		<image type="div" name="class" section="img" attribute="src">post-featuredImage u-m-1_5</image>
+	</service>
 
 	<!-- Todo : Spaces ?
 http://thelongandshort.org/spaces/hot-desks-design-thinking-ideo

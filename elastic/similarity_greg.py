@@ -109,9 +109,6 @@ def findTags(text,nbTags):
     tokens = tokenizeText(text,language)
 
     fdist_in = FreqDist(tokens)
-
-    # Min 3 occurences
-    min_occurence=3
     fdist = fdist_in.most_common(nbTags)
     out=[]
     for x in fdist :

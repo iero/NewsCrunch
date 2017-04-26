@@ -5,20 +5,16 @@
 
   <!-- Emphasize words -->
   <hashtags>
-    <!-- Apple -->
-    <tag>cupertino</tag>
-    <tag>apple</tag>
-    <tag>iOS</tag>
-    <tag>macOS</tag>
-    <tag>watchOS</tag>
+    <tag value="apple">apple,iOs,macOs,watchOs,xcode,mac,iPhone,iPad,iPod</tag>
+    <tag value="amazon">dash</tag>
+    <tag value="google">Google Maps, youtube</tag>
+    <tag value="uber"/>
+    <tag value="airbnb"/>
+    <tag value="facebook"/>
+    <tag value="instagram"/>
+    <tag value="twitter"/>
 
-    <!-- GAFA -->
-    <tag>amazon</tag>
-    <tag>uber</tag>
-    <tag>airbnb</tag>
-    <tag>facebook</tag>
-
-    <tag>iot</tag>
+    <tag value="iot"/>
 
     <tag>nomad</tag>
     <tag>startup</tag>
@@ -29,7 +25,9 @@
     <tag value="sf">san francisco</tag>
     <tag value="bugbounty">bug bounty</tag>
     <tag value="frenchtech">french tech</tag>
-    <tag value="startup">start-up</tag>
+    <tag value="startup">start-up, start up</tag>
     <tag value="stationF">Station F</tag>
+    <tag value="iot">internet of things, internet des objets</tag>
+    <tag value="app">application</tag>
   </simplify>
 </data>

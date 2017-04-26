@@ -1,5 +1,5 @@
 #from twitter import *
-from TwitterFollowBot import TwitterBot
+#from TwitterFollowBot import TwitterBot
 
 import tweepy
 
@@ -37,14 +37,18 @@ api = tweepy.API(auth)
 
 user = api.get_user(username)
 
-print(user.screen_name)
-print(user.followers_count)
-for friend in user.friends():
-   print(friend.screen_name)
+print("+ Analysis "+user.screen_name)
+#print("+- "+user.followers_count+" followers")
+#for friend in user.friends():
+#   print(friend.screen_name)
 
-public_tweets = api.home_timeline()
-for tweet in public_tweets:
-    print(tweet.text)
+for follower in tweepy.Cursor(api.followers).items(10):
+    follower.follow()
+    #print(follower.screen_name)
+
+#public_tweets = api.home_timeline()
+#for tweet in public_tweets:
+#    print(tweet.text)
 
 
 #t = Twitter(auth=OAuth(token_key, token_secret, consumer_key, consumer_secret))
