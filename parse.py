@@ -89,6 +89,25 @@ nbmax_rss_news=float(general_settings.find('settings').find('max_news_rss').text
 today_json_file=out_directory+'/json/'+time.strftime("%Y%m%d")+".json"
 json_today = utils.loadjson(today_json_file)
 
+# stats
+stats_total=0
+stats_twitted=0
+stats_filtered=0
+stats_duplicates=0
+stats_nbwords=0
+stats_nbtags=0
+
+# statistics
+for n in json_today :
+	if n == "statistics" :
+		for t in json_today[n] :
+			stats_total=t['total']
+			stats_twitted=t['twitted']
+			stats_filtered=t['filtered']
+			stats_duplicates=t['duplicates']
+			stats_nbwords=t['nbwords']
+			stats_nbtags=t['nbtags']
+
 #if debug : print("+ JSON size : "+str(len(json_data)))
 while len(json_data) > nbmax_news :
 	m = min(json_data)
@@ -277,6 +296,7 @@ for service in general_settings.findall('service'):
 			if (sim_grade > 0.5) :
 				print("+-[Duplicate] with [{}] Score : {}".format(sim_desc.encode('utf-8'),sim_grade))
 				filtered_post = True
+				stats_duplicates = stats_duplicates +1
 			else :
 				if debug : print("+-[Test Duplicate] with [{}] Score : {}".format(sim_desc.encode('utf-8'),sim_grade))
 
@@ -297,6 +317,11 @@ for service in general_settings.findall('service'):
 			# 		post_title = re.sub(t,"#"+t,post_title)
 
 			if not filtered_post :
+					stats_twitted = stats_twitted +1
+			else :
+					stats_filtered = stats_filtered +1
+
+			if doTweet and not filtered_post :
 				# Twitter
 				tweet_text = post_title
 				tweet_size_allowed = tweet_size - tweet_link_size
@@ -336,26 +361,27 @@ for service in general_settings.findall('service'):
 					try :
 						response = requests.get(out_img, headers=headers, allow_redirects=True)
 						data = response.content
-						if doTweet : r = twitterapi.request('statuses/update_with_media', {'status':tweet_text}, {'media[]':data})
+						r = twitterapi.request('statuses/update_with_media', {'status':tweet_text}, {'media[]':data})
 						if debug :
 							print("+-[TweetPic] [{}]".format(tweet_text.encode('utf-8')))
 					except :
 						try :
-							if doTweet : r = twitterapi.request('statuses/update', {'status':tweet_text})
+							r = twitterapi.request('statuses/update', {'status':tweet_text})
 							if debug :
 								print("+-[TweetNoPicPb] [{}]".format(tweet_text.encode('utf-8')))
 						except :
 							if debug :
 								print("+-[TweetPb] [{}]".format(tweet_text.encode('utf-8')))
-				else :
-					try :
-						if doTweet : r = twitterapi.request('statuses/update', {'status':tweet_text})
-						if debug :
-							print("+-[Tweet] [{}]".format(tweet_text.encode('utf-8')))
-					except :
-						if debug :
-							print("+-[TweetPb] [{}]".format(tweet_text.encode('utf-8')))
+					else :
+						try :
+							r = twitterapi.request('statuses/update', {'status':tweet_text})
+							if debug :
+								print("+-[Tweet] [{}]".format(tweet_text.encode('utf-8')))
+						except :
+							if debug :
+								print("+-[TweetPb] [{}]".format(tweet_text.encode('utf-8')))
 
+			if not filtered_post :
 				# Remove oldest message from json :
 				if len(json_data) >= nbmax_news :
 					m = min(json_data)
@@ -382,6 +408,9 @@ for service in general_settings.findall('service'):
 					'raw' : raw_text
 				})
 
+				stats_nbwords = stats_nbwords+len(out_text.split())
+				stats_nbtags = stats_nbtags+len(post_tags)
+
 				json_today[post_id] = []
 				json_today[post_id].append({
 					'service': service_name,
@@ -402,13 +431,23 @@ for service in general_settings.findall('service'):
 					'liked_by_me' : True
 				})
 
-
 			if debug : print("+-[Tags] "+", ".join(post_tags))
 			print("+-[Entry] "+entry)
+			stats_total = stats_total+1
 
 #Write json
 with open(feed_json_file, 'w') as jsonfile:
     json.dump(json_data, jsonfile)
+
+json_today["statistics"] = []
+json_today["statistics"].append({
+	'total': stats_total,
+	'twitted': stats_twitted,
+	'filtered': stats_filtered,
+	'duplicates': stats_duplicates,
+	'nbwords': stats_nbwords,
+	'nbtags': stats_nbtags
+})
 
 with open(today_json_file, 'w') as jsonfile:
     json.dump(json_today, jsonfile)
