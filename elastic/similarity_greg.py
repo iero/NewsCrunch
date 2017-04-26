@@ -112,11 +112,11 @@ def findTags(text,nbTags):
 
     # Min 3 occurences
     min_occurence=3
-    fdist = sorted(fdist_in.items(),key=lambda x: x[1]>=min_occurence, reverse=True)
+    fdist = fdist_in.most_common(nbTags)
     out=[]
-    for x in range(0,min(nbTags-1,len(fdist))) :
+    for x in fdist :
         pattern = re.compile('[\W_]+', re.UNICODE)
-        word = pattern.sub('', fdist[x][0])
+        word = pattern.sub('', x[0])
         word = unidecode(word).lower()
         if word : out.append(word)
 

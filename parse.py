@@ -455,10 +455,15 @@ json_today["statistics"].append({
 	'filtered': stats_filtered,
 	'duplicates': stats_duplicates,
 	'nbwords': stats_nbwords,
-	'nbtags': stats_nbtags
+	'nbtags': stats_nbtags,
+	'top_trend' : utils.tagsTrend(json_today)
 })
 
-if debug : print(json_today["statistics"])
+if debug :
+	print("[Statistics]")
+	for st in json_today["statistics"] :
+		for s in st :
+			print("+-[{}] {}".format(s,st[s]))
 
 with open(today_json_file, 'w') as jsonfile:
     json.dump(json_today, jsonfile)
@@ -467,7 +472,7 @@ with open(today_json_file, 'w') as jsonfile:
 fg = FeedGenerator()
 fg.id(feed_url) #TODO : mettre numero unique
 fg.title('Veille Digitale')
-fg.subtitle(str(len(json_data))+" articles")
+fg.subtitle(str(json_today["statistics"]))
 fg.author( {'name':'G. Fabre, Digital Advisor for Total E&P','email':'nomail@iero.org'} )
 #fg.logo('http://ex.com/logo.jpg')
 fg.link( href=feed_url, rel='self' )

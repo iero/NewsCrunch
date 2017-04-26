@@ -3,6 +3,8 @@ import json
 
 import xml.etree.ElementTree as ET
 
+from nltk.probability import FreqDist
+
 def loadxml(params_file) :
     tree = ET.parse(params_file)
     return tree.getroot()
@@ -84,3 +86,19 @@ def findArticlefromText(json_data,text) :
     	for t in json_data[news] :
             if text in t['text'] :
                 return t['title']
+
+
+def tagsTrend(json_data) :
+    taglist = []
+    for item in json_data :
+        if item != "statistics" :
+            for t in json_data[item] :
+                for tag in t['tags'] :
+                    taglist.append(tag)
+
+    fdist = FreqDist(taglist)
+    out = []
+    for x in fdist.most_common(10) :
+        out.append(x[0])
+
+    return out
