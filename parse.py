@@ -398,15 +398,15 @@ for service in general_settings.findall('service'):
 						request.urlretrieve.version(general_settings.find('settings').find('User-Agent').text)
 						request.urlretrieve(out_img, img_local)
 						media_id = mastodon.media_post(img_local)
-						#mastodon.status_post(toot_text,in_reply_to_id=None,media_ids=[media_id])
+						mastodon.status_post(toot_text,in_reply_to_id=None,media_ids=[media_id])
 						if os.path.exists("/tmp/"+img_name+img_ext) :
 							os.remove("/tmp/"+img_name+img_ext)
 					except :
 						if os.path.exists("/tmp/"+img_name+img_ext) :
 							os.remove("/tmp/"+img_name+img_ext)
-						#mastodon.toot(toot_text)
-#				else :
-#					mastodon.toot(toot_text)
+						mastodon.toot(toot_text)
+				else :
+					mastodon.toot(toot_text)
 
 			if doTweet and not filtered_post :
 
