@@ -12,6 +12,7 @@ pip install TwitterAPI
 pip install pyshorteners
 pip install unidecode
 
+pip install Mastodon.py
 
 # python
 import nltk

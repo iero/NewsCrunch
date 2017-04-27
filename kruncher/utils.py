@@ -104,9 +104,9 @@ def tagsTrend(json_data) :
     return out
 
 def isTrendyTag(tag,json) :
-    for service in json.findall('hashtags') :
-        print(service)
-        # print(service.get("value"))
-        # if service.get("value") == tag :
-        #     print("TAG : "+tag)
-        #     return True
+    for service in json.find('hashtags') :
+        for t in service.find('hashtags').findall("tag") :
+            print(service.get("value"))
+            if service.get("value") == tag :
+                print("TAG : "+tag)
+                return True

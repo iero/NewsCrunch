@@ -11,7 +11,9 @@ import pytz
 import urllib3
 import requests
 import feedparser
-import urllib.request
+import urllib.request as request
+
+from os.path import splitext, basename
 
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
@@ -23,6 +25,7 @@ import xml.etree.ElementTree as ET
 
 from TwitterAPI import TwitterAPI
 from pyshorteners import Shortener
+from mastodon import Mastodon
 
 import kruncher.utils as utils
 import elastic.similarity_greg as similarity
@@ -36,6 +39,8 @@ def parseURLName(url) :
 	entry = post.link.replace(entry_domain,"").replace('/','-').strip("-")
 	entry = entry+".txt"
 	return entry
+
+counter=0
 
 # Tweet sizes = add 1 for extra space
 tweet_size = 140
@@ -56,6 +61,12 @@ for service in auth_settings.findall('service') :
 		consumer_secret=service.find("consumer_secret").text
 		access_token_key=service.find("access_token_key").text
 		access_token_secret=service.find("access_token_secret").text
+	elif service.get("name") == "mastodon" :
+		mastodon = Mastodon(
+		client_id = service.find("client_id").text,
+		client_secret = service.find("client_secret").text,
+		access_token = service.find("access_token").text,
+		api_base_url = "https://mamot.fr")
 
 headers = {'User-Agent': general_settings.find('settings').find('User-Agent').text}
 
@@ -65,10 +76,12 @@ if "digital-gf.local" in socket.gethostname() :
 	print("Local testing...")
 	debug = True
 	doTweet = False
+	doToot = True
 	out_directory = general_settings.find('settings').find('localoutput').text
 else :
 	debug = False
 	doTweet = True
+	doToot = True
 	out_directory = general_settings.find('settings').find('output').text
 
 # Create output directory structure
@@ -88,6 +101,10 @@ nbmax_rss_news=float(general_settings.find('settings').find('max_news_rss').text
 # JSON feed for today
 today_json_file=out_directory+'/json/'+time.strftime("%Y%m%d")+".json"
 json_today = utils.loadjson(today_json_file)
+
+# JSON feed for RSS
+rss_json_file=out_directory+"/json/rss.json"
+json_rss = utils.loadjson(rss_json_file)
 
 # stats
 stats_total=0
@@ -163,6 +180,7 @@ for service in general_settings.findall('service'):
 
 	for post in feed.entries:
 		filtered_post = False
+		counter = counter+1
 
 		# Grab service tags
 		post_tags= []
@@ -322,8 +340,8 @@ for service in general_settings.findall('service'):
 			# sim_text_desc = utils.findArticlefromText(json_data,sim_text_results[0][2])
 
 			# Replace words by tags in title
-			for t in post_tags :
-				utils.isTrendyTag(t,tags_settings)
+			# for t in post_tags :
+			# 	utils.isTrendyTag(t,tags_settings)
 
 			# tweet_size_allowed = tweet_size - tweet_link_size
 			# for t in post_tags :
@@ -335,24 +353,59 @@ for service in general_settings.findall('service'):
 			else :
 					stats_filtered = stats_filtered +1
 
+			# Twitter
+			tweet_text = post_title
+			tweet_size_allowed = tweet_size - tweet_link_size
+
+			# Mastodon
+			toot_text = post_title
+
+			# Shorten text if needed
+			if (len(tweet_text) >= (tweet_size_allowed) ) :
+				tweet_text = tweet_text[:tweet_size_allowed-1]
+
+			# Add link
+			try :
+				bitly_article_url = shortener.short(web_page.url)
+				tweet_text = tweet_text+" "+bitly_article_url
+				toot_text = toot_text+" "+bitly_article_url
+			except :
+				tweet_text = tweet_text+" "+web_page.url
+				toot_text = toot_text+" "+web_page.url
+
+			# Add source if possible
+			if (len(tweet_text) + len(rss_twitter) < tweet_size_allowed) :
+					tweet_text = tweet_text+" "+rss_twitter
+
+			toot_text = toot_text+" "+rss_twitter
+
+			if doToot and not filtered_post :
+				print("tooting")
+				# Add Image & push toot
+				if out_img and not out_img.startswith("data:"):
+					if debug : print("+-[img] " + out_img)
+					if out_img.startswith("//") :
+						out_img = "https:"+out_img
+					elif out_img.startswith("/") :
+						parsed_web_page = urlparse(web_page.url)
+						dom =  '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_web_page)
+						out_img = dom+out_img
+
+					disassembled = urlparse(out_img)
+					img_name, img_ext = splitext(basename(disassembled.path))
+					img_local = ("/tmp/"+img_name+img_ext)
+					try :
+						request.urlretrieve(out_img, img_local)
+						media_id = mastodon.media_post(img_local)
+						mastodon.status_post(toot_text,in_reply_to_id=None,media_ids=[media_id])
+						os.remove("/tmp/"+img_name+img_ext)
+					except :
+						os.remove("/tmp/"+img_name+img_ext)
+						mastodon.toot(toot_text)
+				else :
+					mastodon.toot(toot_text)
+
 			if doTweet and not filtered_post :
-				# Twitter
-				tweet_text = post_title
-				tweet_size_allowed = tweet_size - tweet_link_size
-
-				# Shorten text if needed
-				if (len(tweet_text) >= (tweet_size_allowed) ) :
-					tweet_text = tweet_text[:tweet_size_allowed-1]
-				# Add link
-				try :
-					bitly_article_url = shortener.short(web_page.url)
-					tweet_text = tweet_text+" "+bitly_article_url
-				except :
-					tweet_text = tweet_text+" "+web_page.url
-
-				# Add source if possible
-				if (len(tweet_text) + len(rss_twitter) < tweet_size_allowed) :
-						tweet_text = tweet_text+" "+rss_twitter
 
 				# Add tags if possible
 				# for t in post_tags :
@@ -375,7 +428,7 @@ for service in general_settings.findall('service'):
 
 					response = requests.get(out_img, headers=headers, allow_redirects=True)
 					data = response.content
-					
+
 					r = twitterapi.request('statuses/update_with_media', {'status':tweet_text}, {'media[]':data})
 					if debug :
 						print("+-[TweetPic] [{}]".format(tweet_text.encode('utf-8')))
@@ -431,7 +484,7 @@ for service in general_settings.findall('service'):
 					'text_size' : str(len(out_text.split())),
 					'raw' : raw_text,
 					'liked' : 0,
-					'liked_by_me' : True
+					'liked_by_me' : False
 				})
 
 			if debug : print("+-[Tags] "+", ".join(post_tags))
@@ -511,5 +564,6 @@ for news in reverse_news :
 
 fg.atom_file(feed_atom_file) # Write the RSS feed to a file
 
+print(counter)
 print(datetime.now())
 print("Done")

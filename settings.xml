@@ -379,7 +379,7 @@ http://www.silicon.fr/feed
 		<twitter_account>@TheNextWeb</twitter_account>
 		<twitter_mention>#tnw</twitter_mention>
 		<text type="div" name="class" section="p">post-body fb-quotable u-m-3</text>
-		<image type="div" name="class" section="img" attribute="src">post-featuredImage u-m-1_5</image>
+		<image type="div" name="class" section="img" attribute="src">post-imageBleed</image>
 	</service>
 
 	<!-- Todo : Spaces ?

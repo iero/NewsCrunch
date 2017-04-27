@@ -16,8 +16,8 @@
 
     <tag value="iot"/>
 
-    <tag>nomad</tag>
-    <tag>startup</tag>
+    <tag value="nomad"/>
+    <tag value="startup"/>
   </hashtags>
 
   <!-- Simplify words found -->
