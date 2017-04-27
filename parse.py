@@ -76,7 +76,7 @@ if "digital-gf.local" in socket.gethostname() :
 	print("Local testing...")
 	debug = True
 	doTweet = False
-	doToot = True
+	doToot = False
 	out_directory = general_settings.find('settings').find('localoutput').text
 else :
 	debug = False
@@ -380,7 +380,7 @@ for service in general_settings.findall('service'):
 			toot_text = toot_text+" "+rss_twitter
 
 			if doToot and not filtered_post :
-				print("tooting")
+				if debug : print("tooting")
 				# Add Image & push toot
 				if out_img and not out_img.startswith("data:"):
 					if debug : print("+-[img] " + out_img)
@@ -395,7 +395,7 @@ for service in general_settings.findall('service'):
 					img_name, img_ext = splitext(basename(disassembled.path))
 					img_local = ("/tmp/"+img_name+img_ext)
 					try :
-						request.urlretrieve.version(general_settings.find('settings').find('User-Agent').text)
+						#request.urlretrieve.version(general_settings.find('settings').find('User-Agent').text)
 						request.urlretrieve(out_img, img_local)
 						media_id = mastodon.media_post(img_local)
 						mastodon.status_post(toot_text,in_reply_to_id=None,media_ids=[media_id])
@@ -432,13 +432,19 @@ for service in general_settings.findall('service'):
 					response = requests.get(out_img, headers=headers, allow_redirects=True)
 					data = response.content
 
-					r = twitterapi.request('statuses/update_with_media', {'status':tweet_text}, {'media[]':data})
-					if debug :
-						print("+-[TweetPic] [{}]".format(tweet_text.encode('utf-8')))
+					try :
+						r = twitterapi.request('statuses/update_with_media', {'status':tweet_text}, {'media[]':data})
+						if debug :
+							print("+-[TweetPic] [{}]".format(tweet_text.encode('utf-8')))
+					except:
+							print("+-[TweetPic] Fail")
 				else :
-					r = twitterapi.request('statuses/update', {'status':tweet_text})
-					if debug :
-						print("+-[Tweet] [{}]".format(tweet_text.encode('utf-8')))
+					try :
+						r = twitterapi.request('statuses/update', {'status':tweet_text})
+						if debug :
+							print("+-[Tweet] [{}]".format(tweet_text.encode('utf-8')))
+					except:
+							print("+-[Tweet] Fail")
 
 			if not filtered_post :
 				# Remove oldest message from json :
