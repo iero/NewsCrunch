@@ -18,7 +18,8 @@
 
 	<!-- French Digital -->
 
-	<service name="Presse Citron" lang="fr">
+	<!-- Too much crap -->
+	<!--service name="Presse Citron" lang="fr">
 		<url>http://www.presse-citron.net/feed/</url>
 		<text type="div" name="class" section="p">post-content description</text>
 		<image type="div" name="class" section="img" attribute="src">post-content description</image>
@@ -29,7 +30,7 @@
 		<sanitize>
 			<remove type="title">\[.*?\] </remove>
 		</sanitize>
-	</service>
+	</service-->
 
 	<service name="Journal du Net #smartcities" lang="fr">
 		<url>http://www.journaldunet.com/smart-city/rss/</url>
@@ -379,7 +380,7 @@ http://www.silicon.fr/feed
 		<twitter_account>@TheNextWeb</twitter_account>
 		<twitter_mention>#tnw</twitter_mention>
 		<text type="div" name="class" section="p">post-body fb-quotable u-m-3</text>
-		<image type="div" name="class" section="img" attribute="src">post-imageBleed</image>
+		<image type="div" name="class" section="img" attribute="data-src">post-featuredImage u-m-1_5</image>
 	</service>
 
 	<!-- Todo : Spaces ?

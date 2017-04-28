@@ -76,7 +76,7 @@ if "digital-gf.local" in socket.gethostname() :
 	print("Local testing...")
 	debug = True
 	doTweet = False
-	doToot = False
+	doToot = True
 	out_directory = general_settings.find('settings').find('localoutput').text
 else :
 	debug = False
@@ -333,12 +333,6 @@ for service in general_settings.findall('service'):
 			for t in similarity.findTags(out_text,10) :
 				post_tags.append(t)
 
-			# Test similarity on text
-			# text_dict.append(out_text)
-			# sim_text_results = similarity.find_similar(text_dict)
-			# sim_text_grade=float("{0:.2f}".format(sim_text_results[0][1]))
-			# sim_text_desc = utils.findArticlefromText(json_data,sim_text_results[0][2])
-
 			# Replace words by tags in title
 			# for t in post_tags :
 			# 	utils.isTrendyTag(t,tags_settings)
@@ -397,7 +391,14 @@ for service in general_settings.findall('service'):
 					try :
 						#request.urlretrieve.version(general_settings.find('settings').find('User-Agent').text)
 						request.urlretrieve(out_img, img_local)
-						media_id = mastodon.media_post(img_local)
+
+						if img_ext == "jpg" : img_mime="image/jpeg"
+						elif img_ext == "png" : img_mime="image/png"
+						else : img_mime=None
+
+						media_id = mastodon.media_post(img_local,mime_type=img_mime)
+						#print("/tmp/"+img_name+img_ext)
+						#print(img_ext)
 						mastodon.status_post(toot_text,in_reply_to_id=None,media_ids=[media_id])
 						if os.path.exists("/tmp/"+img_name+img_ext) :
 							os.remove("/tmp/"+img_name+img_ext)
@@ -406,6 +407,7 @@ for service in general_settings.findall('service'):
 							os.remove("/tmp/"+img_name+img_ext)
 						mastodon.toot(toot_text)
 				else :
+					#print("")
 					mastodon.toot(toot_text)
 
 			if doTweet and not filtered_post :

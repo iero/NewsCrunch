@@ -5,19 +5,49 @@
 
   <!-- Emphasize words -->
   <hashtags>
-    <tag value="apple">apple,iOs,macOs,watchOs,xcode,mac,iPhone,iPad,iPod</tag>
+    <!-- Corps -->
+    <tag value="apple">cupertino,apple,iOs,macOs,watchOs,xcode,mac,iPhone,iPad,iPod</tag>
     <tag value="amazon">dash</tag>
     <tag value="google">Google Maps, youtube</tag>
+    <tag value="facebook"/>
+    <tag value="samsung">Galaxy</tag>
+    <tag value="microsoft">windows</tag>
+    <!-- unicorns -->
     <tag value="uber"/>
     <tag value="airbnb"/>
-    <tag value="facebook"/>
+    <!-- music and tv -->
+    <tag value="spotify"/>
+    <tag value="deezer"/>
+    <tag value="netflix"/>
+    <tag value="molotov"/>
+    <!-- social networks-->
+    <tag value="slack"/>
     <tag value="instagram"/>
     <tag value="twitter"/>
+    <tag value="linkedin"/>
+    <tag value="mastodon"/>
+    <tag value="yammer"/>
+    <!-- others -->
+    <tag value="tesla"/>
+    <tag value="nasa"/>
+    <tag value="spaceX"/>
+    <tag value="blackberry"/>
+    <tag value="nintendo">switch</tag>
+    <tag value="razer"/>
 
+    <!-- buzzwords -->
     <tag value="iot"/>
-
+    <tag value="arm"/>
+    <tag value="raspberry"/>
     <tag value="nomad"/>
     <tag value="startup"/>
+    <tag value="blockchain"/>
+    <tag value="bitcoin"/>
+    <tag value="rh"/>
+    <tag value="pitch"/>
+    <tag value="wifi"/>
+    <tag value="hack"/>
+    <tag value="hackathon"/>
   </hashtags>
 
   <!-- Simplify words found -->
