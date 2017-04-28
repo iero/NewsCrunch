@@ -14,6 +14,9 @@ pip install unidecode
 
 pip install Mastodon.py
 
+# for jpg to png
+pip install pillow
+
 # python
 import nltk
 nltk.download()

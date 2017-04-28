@@ -110,3 +110,16 @@ def isTrendyTag(tag,json) :
             if service.get("value") == tag :
                 print("TAG : "+tag)
                 return True
+
+def cleanImage_url(page,img) :
+    if img and not img.startswith("data:") :
+        if img.startswith("//") :
+            img = "https:"+out_img
+        elif img.startswith("/") :
+            parsed_web_page = urlparse(page.url)
+            dom =  '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_web_page)
+            img = dom+img
+
+        return img
+    else :
+        return None

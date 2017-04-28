@@ -27,7 +27,9 @@ from TwitterAPI import TwitterAPI
 from pyshorteners import Shortener
 from mastodon import Mastodon
 
-import kruncher.utils as utils
+# Perso
+import kruncher.utils as kr_utils
+import kruncher.mastodon as kr_mastodon
 import elastic.similarity_greg as similarity
 
 # Utils
@@ -47,9 +49,9 @@ tweet_size = 140
 tweet_link_size = 1+23
 
 # Load Services & security Settings
-general_settings = utils.loadxml("settings.xml")
-auth_settings = utils.loadxml("auth.xml")
-tags_settings = utils.loadxml("hashtags.xml")
+general_settings = kr_utils.loadxml("settings.xml")
+auth_settings = kr_utils.loadxml("auth.xml")
+tags_settings = kr_utils.loadxml("hashtags.xml")
 
 print(datetime.now())
 
@@ -76,7 +78,7 @@ if "digital-gf.local" in socket.gethostname() :
 	print("Local testing...")
 	debug = True
 	doTweet = False
-	doToot = True
+	doToot = False
 	out_directory = general_settings.find('settings').find('localoutput').text
 else :
 	debug = False
@@ -92,7 +94,7 @@ if not os.path.exists(out_directory+'/json'): os.makedirs(out_directory+'/json')
 
 # Create JSON feed
 feed_json_file=general_settings.find('settings').find('feed_json_file').text
-json_data = utils.loadjson(feed_json_file)
+json_data = kr_utils.loadjson(feed_json_file)
 
 # Keep last X messages for process and for RSS
 nbmax_news=float(general_settings.find('settings').find('max_news').text)
@@ -100,11 +102,11 @@ nbmax_rss_news=float(general_settings.find('settings').find('max_news_rss').text
 
 # JSON feed for today
 today_json_file=out_directory+'/json/'+time.strftime("%Y%m%d")+".json"
-json_today = utils.loadjson(today_json_file)
+json_today = kr_utils.loadjson(today_json_file)
 
 # JSON feed for RSS
 rss_json_file=out_directory+"/json/rss.json"
-json_rss = utils.loadjson(rss_json_file)
+json_rss = kr_utils.loadjson(rss_json_file)
 
 # stats
 stats_total=0
@@ -264,9 +266,9 @@ for service in general_settings.findall('service'):
 			rss_text_value = service.find('text').text
 			rss_text_section = service.find('text').get('section')
 
-			out_text= utils.extractTextFromPage(soup,rss_text_type,rss_text_name,rss_text_value,rss_text_section)
+			out_text= kr_utils.extractTextFromPage(soup,rss_text_type,rss_text_name,rss_text_value,rss_text_section)
 
-			raw_text= utils.extractFormatedTextFromPage(soup,rss_text_type,rss_text_name,rss_text_value,rss_text_section)
+			raw_text= kr_utils.extractFormatedTextFromPage(soup,rss_text_type,rss_text_name,rss_text_value,rss_text_section)
 
 			file = open(rss_dir+'/'+entry, 'wb')
 			file.write(out_text.encode('utf-8'))
@@ -293,7 +295,7 @@ for service in general_settings.findall('service'):
 				rss_img_section = service.find('image').get('section')
 				rss_img_attribute = service.find('image').get('attribute')
 
-				out_img= utils.extractImageFromPage(soup,rss_img_type,rss_img_name,rss_img_value,rss_img_section,rss_img_attribute)
+				out_img= kr_utils.extractImageFromPage(soup,rss_img_type,rss_img_name,rss_img_value,rss_img_section,rss_img_attribute)
 			if not out_img and service.find('image_alt') is not None :
 				rss_img_type = service.find('image_alt').get('type')
 				rss_img_name = service.find('image_alt').get('name')
@@ -301,7 +303,7 @@ for service in general_settings.findall('service'):
 				rss_img_section = service.find('image_alt').get('section')
 				rss_img_attribute = service.find('image_alt').get('attribute')
 
-				out_img= utils.extractImageFromPage(soup,rss_img_type,rss_img_name,rss_img_value,rss_img_section,rss_img_attribute)
+				out_img= kr_utils.extractImageFromPage(soup,rss_img_type,rss_img_name,rss_img_value,rss_img_section,rss_img_attribute)
 
 			#Filters title
 			if service.find('filters') is not None :
@@ -374,40 +376,10 @@ for service in general_settings.findall('service'):
 			toot_text = toot_text+" "+rss_twitter
 
 			if doToot and not filtered_post :
-				if debug : print("tooting")
-				# Add Image & push toot
-				if out_img and not out_img.startswith("data:"):
-					if debug : print("+-[img] " + out_img)
-					if out_img.startswith("//") :
-						out_img = "https:"+out_img
-					elif out_img.startswith("/") :
-						parsed_web_page = urlparse(web_page.url)
-						dom =  '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_web_page)
-						out_img = dom+out_img
-
-					disassembled = urlparse(out_img)
-					img_name, img_ext = splitext(basename(disassembled.path))
-					img_local = ("/tmp/"+img_name+img_ext)
-					try :
-						#request.urlretrieve.version(general_settings.find('settings').find('User-Agent').text)
-						request.urlretrieve(out_img, img_local)
-
-						if img_ext == "jpg" : img_mime="image/jpeg"
-						elif img_ext == "png" : img_mime="image/png"
-						else : img_mime=None
-
-						media_id = mastodon.media_post(img_local,mime_type=img_mime)
-						#print("/tmp/"+img_name+img_ext)
-						#print(img_ext)
-						mastodon.status_post(toot_text,in_reply_to_id=None,media_ids=[media_id])
-						if os.path.exists("/tmp/"+img_name+img_ext) :
-							os.remove("/tmp/"+img_name+img_ext)
-					except :
-						if os.path.exists("/tmp/"+img_name+img_ext) :
-							os.remove("/tmp/"+img_name+img_ext)
-						mastodon.toot(toot_text)
+				out_img = kr_utils.cleanImage_url(web_page,out_img)
+				if out_img :
+					kr_mastodon.tootImg(mastodon,toot_text,out_img)
 				else :
-					#print("")
 					mastodon.toot(toot_text)
 
 			if doTweet and not filtered_post :
@@ -513,7 +485,7 @@ json_today["statistics"].append({
 	'duplicates': stats_duplicates,
 	'nbwords': stats_nbwords,
 	'nbtags': stats_nbtags,
-	'top_trend' : utils.tagsTrend(json_today)
+	'top_trend' : kr_utils.tagsTrend(json_today)
 })
 
 if debug :
