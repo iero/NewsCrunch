@@ -245,7 +245,11 @@ for service in general_settings.findall('service'):
 				for filter in service.find('filters').findall("filter") :
 					filter_type = filter.get('type')
 					filter_value = filter.text
-					#print("test "+filter_value+" in "+post_title.lower())
+
+					# filter based on url
+					if filter_type == "url" and filter_value in link :
+						print("+-[Url filter] matched on "+filter_value)
+						filtered_post = True
 					# based on title
 					if filter_type == "title" and filter_value in post_title.lower() :
 						print("+-[Title filter] matched on "+filter_value)
@@ -324,7 +328,7 @@ for service in general_settings.findall('service'):
 			else : sim_desc = sim_results[0][2]
 			#print("%.2f".format(sim_results[0][1]))
 			grade_treshold=float(general_settings.find('settings').find('similarity_min').text)
-			if (sim_grade > grade_treshold) :
+			if (sim_grade >= grade_treshold) :
 				print("+-[Duplicate] with [{}] Score : {}".format(sim_desc.encode('utf-8'),sim_grade))
 				filtered_post = True
 				stats_duplicates = stats_duplicates +1

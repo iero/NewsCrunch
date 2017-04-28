@@ -264,6 +264,9 @@
 		<twitter_mention>#petitweb</twitter_mention>
 		<text type="div" name="class" section="p">entry-content</text>
 		<image type="div" name="class" section="img" attribute="data-lazy-src">thumbnail single-post-thumbnail section</image>
+		<filters>
+			<filter type="url">emploi</filter>
+		</filters>
 		<!--filters>
 			<filter type="title">revue de web</filter>
 		</filters-->
